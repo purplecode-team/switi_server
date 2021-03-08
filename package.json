@@ -1,0 +1,24 @@
+{
+  "name": "switi_server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/purplecode-team/switi_server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/purplecode-team/switi_server/issues"
+  },
+  "homepage": "https://github.com/purplecode-team/switi_server#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7",
+    "prettier": "^2.2.1"
+  }
+}
