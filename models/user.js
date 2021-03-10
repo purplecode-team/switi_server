@@ -4,12 +4,12 @@ module.exports = class User extends Sequelize.Model {
     static init(sequelize) {
         return super.init({
             email: {
-                type: Sequelize.STRING(100),
+                type: Sequelize.STRING,
                 allowNull: false,
                 unique: true,
             },
             password: {
-                type:Sequelize.STRING(100),
+                type:Sequelize.STRING,
                 allowNull:false,
             },
             gender:{
@@ -21,13 +21,13 @@ module.exports = class User extends Sequelize.Model {
                 allowNull:false,
             },
             nickname:{
-                type:Sequelize.STRING(100),
+                type:Sequelize.STRING,
                 unique:true,
                 allowNull:false,
             },
             aboutme:{
                 type:Sequelize.STRING,
-                allowNull:false,
+                allowNull:true,
             },
             sugar:{
                 type:Sequelize.INTEGER,
@@ -35,7 +35,7 @@ module.exports = class User extends Sequelize.Model {
                 defaultValue: '50',
             },
             profilepath:{
-                type:Sequelize.STRING(100),
+                type:Sequelize.STRING,
                 allowNull:true,
             },
             event:{ //이벤트 프로모션 알림 메일 수신
@@ -52,6 +52,7 @@ module.exports = class User extends Sequelize.Model {
                 type:Sequelize.INTEGER,
                 allowNull:true,
             },
+
         }, {
             sequelize,
             timestamps:true,
@@ -71,6 +72,10 @@ module.exports = class User extends Sequelize.Model {
         db.User.hasMany(db.Apply,{foreignKey:'idUser',sourceKey:'id'});
         db.User.hasOne(db.Alarm,{foreignKey:'idUser',sourceKey:'id'});
         db.User.belongsToMany(db.Study,{through:'studyMember'});
+        db.User.belongsToMany(db.Interest,{through:'myInterest'});
+        db.User.belongsToMany(db.Character,{through:'myCharacter'});
+        db.User.belongsToMany(db.Gu,{through:'myRegion'});
+        db.User.belongsToMany(db.State,{through:'myState'});
 
 
 

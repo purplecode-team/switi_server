@@ -20,5 +20,6 @@ module.exports = class Gu extends Sequelize.Model {
 
     static associate(db) {
         db.Gu.belongsTo(db.Region,{foreignKey:'regionId', targetKey:'id'});
+        db.Gu.belongsToMany(db.User, {through:'myRegion'});
     };
 }
