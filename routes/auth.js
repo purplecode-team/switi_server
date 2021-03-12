@@ -75,7 +75,7 @@ router.post('/login',async(req,res,next)=>{
                 email: user.email,
                 nickname: user.nickname,
             }, process.env.JWT_SECRET);
-            req.session.jwt = token;
+
             console.log(token);
             return res.status(200).send({message:"토큰이 발급되었습니다.",token});
         }
