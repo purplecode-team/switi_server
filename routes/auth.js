@@ -1,7 +1,9 @@
 const express = require('express');
-const passport = require('passport');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
+const { isLoggedIn } = require('./middlewares');
+const emailUtil = require('./emailUtil');
 
 const router = express.Router();
 
@@ -43,12 +45,51 @@ router.post('/signup', async (req,res,next) => {
             age,
         });
 
-        return res.status(200).send({message:"가입완료"});
+        // 인증번호 발급 메일 전송 
+        const num = await emailUtil.sendEmail(email);
+        return res.status(200).send({message:"가입완료", num});
 
     }catch(err){
         console.error(err);
         return res.status(500).send('error');
     }
+});
+
+// 로그인 테스트 라우터
+router.get('/test',isLoggedIn, (req,res)=>{
+    res.send('로그인확인@');
+})
+
+router.post('/login',async(req,res,next)=>{
+    const {email,password} = req.body;
+
+    try{
+        const user = await User.findOne({where:{email}});
+
+        if(!user){
+            return res.status(404).send({message:"존재하지 않는 회원입니다."});
+        }
+
+        const result = await bcrypt.compare(password,user.password);
+
+        // 패스워드 일치 시
+        if(result){
+            const token = jwt.sign({
+                email: user.email,
+                nickname: user.nickname,
+            }, process.env.JWT_SECRET);
+            req.session.jwt = token;
+            console.log(token);
+            return res.status(200).send({message:"토큰이 발급되었습니다.",token});
+        }
+
+        return res.status(404).send({message:"패스워드가 일치하지 않습니다."});
+
+    } catch(err){
+        console.error(err);
+        return res.status(500).send('error');
+    }
+
 });
 
 module.exports = router;
