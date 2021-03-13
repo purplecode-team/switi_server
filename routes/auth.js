@@ -45,9 +45,7 @@ router.post('/signup', async (req,res,next) => {
             age,
         });
 
-        // 인증번호 발급 메일 전송 
-        const num = await emailUtil.sendEmail(email);
-        return res.status(200).send({message:"가입완료", num}); // true 모든 api 수정하기
+        return res.status(200).send({result:true,message:"가입완료"}); // true 모든 api 수정하기
 
     }catch(err){
         console.error(err);
