@@ -14,13 +14,13 @@ router.post('/checkNickname', async(req,res,next)=>{
            where:{nickname:req.body.nickname}
         });
         if(isUser){
-            return res.status(400).send({message:"중복된 닉네임입니다."}); // 중복일 경우
+            return res.status(400).send({result:false,message:"중복된 닉네임입니다."}); // 중복일 경우
         }else{
-            return res.status(200).send({message:"사용가능한 닉네임입니다."}); // 중복 x
+            return res.status(200).send({result:true,message:"사용가능한 닉네임입니다."}); // 중복 x
         }
     }catch(err){
         console.error(err);
-        return res.status(500).send('error');
+        return res.status(500).send({result:false,message:'error'});
     }
 });
 
