@@ -7,6 +7,6 @@ exports.isLoggedIn = (req,res,next) => {
         return next();
     }catch(err){
         console.error(err);
-        return res.status(401).send({message:'유효하지 않는 토큰입니다.'});
+        return res.status(401).send({result:false,message:'유효하지 않는 토큰입니다.'});
     }
 };
