@@ -27,7 +27,7 @@ module.exports = {
         }
 
         try{
-            const result = await smtpTransport.sendMail(mailOptions);
+            await smtpTransport.sendMail(mailOptions);
             return num;
         }catch(err){
             console.error(err);

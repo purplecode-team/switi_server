@@ -33,11 +33,11 @@ router.post('/signup', async (req,res,next) => {
             where:{email}
         });
         if(isEmail){
-           return res.status(400).send({message:"이미 가입된 이메일입니다."});
+           return res.status(400).send({result:false,message:"이미 가입된 이메일입니다."}); //false 추가해주기
         }
 
         const hash = await bcrypt.hash(password, 12) // 패스워드 암호화
-        await User.create({
+        await User.create({ // 인증메일 전송 ( 회원가입때 할지 로그인할때 할지 ? )
             nickname,
             email,
             password:hash,
@@ -47,7 +47,7 @@ router.post('/signup', async (req,res,next) => {
 
         // 인증번호 발급 메일 전송 
         const num = await emailUtil.sendEmail(email);
-        return res.status(200).send({message:"가입완료", num});
+        return res.status(200).send({message:"가입완료", num}); // true 모든 api 수정하기
 
     }catch(err){
         console.error(err);
@@ -66,8 +66,9 @@ router.post('/login',async(req,res,next)=>{
     try{
         const user = await User.findOne({where:{email}});
 
+        // 하나 틀리면 틀린걸로 , 5번 틀리면 - 1분
         if(!user){
-            return res.status(404).send({message:"존재하지 않는 회원입니다."});
+            return res.status(404).send({result:false});
         }
 
         const result = await bcrypt.compare(password,user.password);
@@ -78,12 +79,12 @@ router.post('/login',async(req,res,next)=>{
                 email: user.email,
                 nickname: user.nickname,
             }, process.env.JWT_SECRET);
-            req.session.jwt = token;
+
             console.log(token);
-            return res.status(200).send({message:"토큰이 발급되었습니다.",token});
+            return res.status(200).send({result:true,token});
         }
 
-        return res.status(404).send({message:"패스워드가 일치하지 않습니다."});
+        return res.status(404).send({result:false});
 
     } catch(err){
         console.error(err);
