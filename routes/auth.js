@@ -129,4 +129,29 @@ router.post('/login',async(req,res,next)=>{
 
 });
 
+//비밀번호 찾기
+router.post('/findPwd', async(req,res)=>{
+    const email = req.body.email;
+    try{
+        const user = User.findOne({where:email});
+        if(!user){
+            // 존재하지 않는 이메일인 경우
+            return res.status(404).send({result:false});
+        }
+        //메일 전송
+        await mailUtil.sendEmail(email);
+        return res.status(200).send({result:true});
+
+    }catch(err){
+        console.log(err);
+        return res.status(500).send({result:false});
+    }
+});
+
+//비밀번호 재설정
+router.post('/setNewPwd',async(req,res)=>{
+
+});
+
+
 module.exports = router;
