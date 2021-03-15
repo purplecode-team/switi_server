@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const { isLoggedIn } = require('./middlewares');
+const mailUtil = require('./mailUtil');
 
 const router = express.Router();
 
@@ -57,6 +58,37 @@ router.get('/test',isLoggedIn, (req,res)=>{
     res.send('로그인확인@');
 })
 
+//메일 인증
+router.post('/compareCode',async(req,res)=>{
+    const {email, inputCode} = req.body;
+
+    try{
+        //유저정보 가져오기
+        const user = await User.findOne({where:{email:email}});
+        if(inputCode == user.certificationCode){
+            // 코드가 일치하면 인증번호값 null 로 변경 후 토큰발급
+            console.log("코드 일치");
+            await User.update(
+                {certificationCode:null,certification:true},
+                {where:{email:email}});
+            const token = jwt.sign({
+                email: user.email,
+                nickname: user.nickname,
+            }, process.env.JWT_SECRET);
+
+            console.log(token);
+            return res.status(200).send({result:true,token});
+        }else{
+            return res.status(404).send({result:false,message:"인증번호가 일치하지 않습니다."});
+        }
+    }catch(err){
+        console.log(err);
+        return res.status(500).send({result:false});
+    }
+
+})
+
+//로그인
 router.post('/login',async(req,res,next)=>{
     const {email,password} = req.body;
 
@@ -64,23 +96,31 @@ router.post('/login',async(req,res,next)=>{
         const user = await User.findOne({where:{email}});
 
         if(!user){
-            return res.status(404).send({message:"존재하지 않는 회원입니다."});
+            return res.status(404).send({result:false});
         }
 
         const result = await bcrypt.compare(password,user.password);
 
         // 패스워드 일치 시
         if(result){
+            if(!user.certification){
+                // 최초 로그인일 경우 인증메일 전송하기
+                console.log('메일 전송');
+                await mailUtil.sendEmail(email);
+                // 최초 로그인 시 result false , 해당 유저 이메일 반환
+                return res.status(400).send({result:false,email:email});
+            }
+
             const token = jwt.sign({
                 email: user.email,
                 nickname: user.nickname,
             }, process.env.JWT_SECRET);
 
             console.log(token);
-            return res.status(200).send({message:"토큰이 발급되었습니다.",token});
+            return res.status(200).send({result:true,token});
         }
 
-        return res.status(404).send({message:"패스워드가 일치하지 않습니다."});
+        return res.status(404).send({result:false});
 
     } catch(err){
         console.error(err);
