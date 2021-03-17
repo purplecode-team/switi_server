@@ -72,6 +72,7 @@ router.post('/compareCode',async(req,res)=>{
                 {certificationCode:null,certification:true},
                 {where:{email:email}});
             const token = jwt.sign({
+                id:user.id,
                 email: user.email,
                 nickname: user.nickname,
             }, process.env.JWT_SECRET);
@@ -112,6 +113,7 @@ router.post('/login',async(req,res,next)=>{
             }
 
             const token = jwt.sign({
+                id:user.id,
                 email: user.email,
                 nickname: user.nickname,
             }, process.env.JWT_SECRET);
