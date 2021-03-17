@@ -26,8 +26,7 @@ router.post('/checkNickname', async(req,res,next)=>{
 
 //회원가입
 router.post('/signup', async (req,res,next) => {
-    const { nickname, email, password, gender, age } = req.body;
-
+    const { nickname, email, password, gender } = req.body; // 이메일, 패스워드, 닉네임, 성별     
     try{
         const isEmail = await User.findOne({
             where:{email}
@@ -42,7 +41,6 @@ router.post('/signup', async (req,res,next) => {
             email,
             password:hash,
             gender,
-            age,
         });
 
         return res.status(200).send({result:true,message:"가입완료"}); // true 모든 api 수정하기
