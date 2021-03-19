@@ -15,14 +15,6 @@ module.exports = class Study extends Sequelize.Model {
                 type:Sequelize.STRING,
                 allowNull:false,
             },
-            address:{
-                type:Sequelize.STRING,
-                allowNull:false,
-            },
-            category:{
-                type:Sequelize.STRING,
-                allowNull:false,
-            },
             target:{
                 type:Sequelize.STRING,
                 allowNull:false,
@@ -34,7 +26,7 @@ module.exports = class Study extends Sequelize.Model {
             },
             detail_address:{
                 type:Sequelize.STRING,
-                allowNull:false,
+                allowNull:true,
             },
             period:{
                 type:Sequelize.STRING,
@@ -75,6 +67,8 @@ module.exports = class Study extends Sequelize.Model {
         db.Study.hasMany(db.Evaluation,{foreignKey:'idStudy',sourceKey:'id'});
         db.Study.hasMany(db.Image,{foreignKey:'idStudy',sourceKey:'id'});
         db.Study.belongsToMany(db.User,{through:'studyMember'});
+        db.Study.belongsToMany(db.Interest, {through:'studyCategory'}); // 카테고리 n:m
+        db.Study.belongsToMany(db.Gu, {through:'studyRegion'}); // 스터디 지역
     }
 
 
