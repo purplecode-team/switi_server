@@ -148,10 +148,34 @@ router.post('/findPwd', async(req,res)=>{
     }
 });
 
-//비밀번호 재설정
-router.post('/setNewPwd',async(req,res)=>{
+//인증코드 확인
+router.post('/checkCode',async(req,res)=>{
+    const { inputCode, email } = req.body;
+    //유저정보 가져오기
+    try{
+        await mailUtil.compareCode(email,inputCode);
+        return res.status(200).send({result:true});
+    }catch(err){
+        console.log(err);
+        return res.status(500).send({result:false});
+    }
 
 });
 
+//비밀번호 재설정
+router.post('/setNewPwd',async(req,res)=>{
+    const { password , email } = req.body;
+    try {
+        const hash = await bcrypt.hash( password, 12); // 패스워드 암호화
+        await User.update(
+            {password: hash},
+            {where: {email: email}
+        });
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({return:false});
+    }
+
+});
 
 module.exports = router;
