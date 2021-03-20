@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const { isLoggedIn } = require('./middlewares');
 const mailUtil = require('./mailUtil');
 
+
 const router = express.Router();
 
 //닉네임 중복어부 체크
@@ -14,38 +15,36 @@ router.post('/checkNickname', async(req,res,next)=>{
            where:{nickname:req.body.nickname}
         });
         if(isUser){
-            return res.status(400).send({message:"중복된 닉네임입니다."}); // 중복일 경우
+            return res.status(400).send({result:false,message:"중복된 닉네임입니다."}); // 중복일 경우
         }else{
-            return res.status(200).send({message:"사용가능한 닉네임입니다."}); // 중복 x
+            return res.status(200).send({result:true,message:"사용가능한 닉네임입니다."}); // 중복 x
         }
     }catch(err){
         console.error(err);
-        return res.status(500).send('error');
+        return res.status(500).send({result:false,message:'error'});
     }
 });
 
 //회원가입
 router.post('/signup', async (req,res,next) => {
-    const { nickname, email, password, gender, age } = req.body;
-
+    const { nickname, email, password, gender } = req.body; // 이메일, 패스워드, 닉네임, 성별     
     try{
         const isEmail = await User.findOne({
             where:{email}
         });
         if(isEmail){
-           return res.status(400).send({message:"이미 가입된 이메일입니다."});
+           return res.status(400).send({result:false,message:"이미 가입된 이메일입니다."}); //false 추가해주기
         }
 
         const hash = await bcrypt.hash(password, 12) // 패스워드 암호화
-        await User.create({
+        await User.create({ // 인증메일 전송 ( 회원가입때 할지 로그인할때 할지 ? )
             nickname,
             email,
             password:hash,
             gender,
-            age,
         });
 
-        return res.status(200).send({message:"가입완료"});
+        return res.status(200).send({result:true,message:"가입완료"}); // true 모든 api 수정하기
 
     }catch(err){
         console.error(err);
@@ -89,13 +88,13 @@ router.post('/compareCode',async(req,res)=>{
 
 })
 
-//로그인
 router.post('/login',async(req,res,next)=>{
     const {email,password} = req.body;
 
     try{
         const user = await User.findOne({where:{email}});
 
+        // 하나 틀리면 틀린걸로 , 5번 틀리면 - 1분
         if(!user){
             return res.status(404).send({result:false});
         }
