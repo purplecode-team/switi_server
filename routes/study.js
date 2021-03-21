@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const { Study,Image } = require('../models');
+const { Study,Image,sequelize } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 const path = require('path');
 const fs = require('fs');
@@ -34,7 +34,9 @@ router.post('/addStudy',isLoggedIn,upload.single('img'),async(req,res)=>{
     const imgPath = req.file.filename;
     //카테고리(3개 이하) , 지역(3개 이하), 모집대상 , 모집인원, 모임장소, 활동기간, 예정종료일, 문의연락처, 제목 ,내용 , 이미지사진
     const {online_flag, category, address, target, recruit_num, detail_address, period, endDate, contact, title, desc } = req.body;
-    console.log(req.body);
+    const t = await sequelize.transaction(); // 트랜잭션 생성
+    //console.log(req.body);
+
     try {
         const study = await Study.create({
             online_flag,
@@ -53,17 +55,19 @@ router.post('/addStudy',isLoggedIn,upload.single('img'),async(req,res)=>{
         }, {
             include: [
                 Image
-            ],
+            ], transaction:t
         });
-        if(!online_flag){ // 오프라인 스터디 일 경우
-            study.addGu(address); // 지역 추가
+
+        if(online_flag !== 'true'){ // 오프라인 스터디 일 경우
+            await study.addGu(address,{transaction:t}); // 지역 추가
         }
-        study.addInterest(category); // 카테고리 추가
+        await study.addInterest(category,{transaction:t}); // 카테고리 추가
+        await t.commit();
 
         return res.status(200).send({result:true,study});
 
-
     }catch(err) {
+        await t.rollback();
         console.error(err);
         return res.status(500).send({result:false});
     }
