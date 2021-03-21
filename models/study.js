@@ -4,7 +4,7 @@ module.exports = class Study extends Sequelize.Model {
     static init(sequelize){
         return super.init({
             online_flag:{
-                type: Sequelize.INTEGER,
+                type: Sequelize.BOOLEAN,
                 allowNull: false,
             },
             title:{
