@@ -69,6 +69,7 @@ module.exports = class Study extends Sequelize.Model {
         db.Study.belongsToMany(db.User,{through:'studyMember'});
         db.Study.belongsToMany(db.Interest, {through:'studyCategory'}); // 카테고리 n:m
         db.Study.belongsToMany(db.Gu, {through:'studyRegion'}); // 스터디 지역
+        db.Study.belongsToMany(db.User, {through:'likedList'}); // 스크랩 스터디 목록
     }
 
 
