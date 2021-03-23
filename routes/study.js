@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const { Study,Image,sequelize } = require('../models');
+const { Study,Image,sequelize,Interest,Gu,State,User } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 const path = require('path');
 const fs = require('fs');
@@ -42,7 +42,6 @@ router.post('/addStudy',isLoggedIn,upload.single('img'),async(req,res)=>{
             online_flag,
             idUser,
             period,
-            target,
             detail_address,
             endDate,
             contact,
@@ -62,6 +61,7 @@ router.post('/addStudy',isLoggedIn,upload.single('img'),async(req,res)=>{
             await study.addGu(address,{transaction:t}); // 지역 추가
         }
         await study.addInterest(category,{transaction:t}); // 카테고리 추가
+        await study.addState(state,{transaction:t});
         await t.commit();
 
         return res.status(200).send({result:true,study});
@@ -75,7 +75,39 @@ router.post('/addStudy',isLoggedIn,upload.single('img'),async(req,res)=>{
 });
 
 //스터디 목록 불러오기
-router.get('/studyList',(req,res)=>{
+router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
+    const flag = req.params.onlineFlag; //온라인 오프라인 flag
+    // 아직 지역은 추가 안함
+    try{
+        const study = await Study.findAll({
+            attributes:{include: [
+                [
+                    sequelize.literal(`(
+                    SELECT COUNT(*)
+                    FROM likedList
+                    WHERE
+                    Study.id = likedList.StudyId
+                    )`),
+                    'scrapCount'
+                ]
+            ]},
+            include:[{
+                model:Interest,
+                attributes:['category']
+            }, {
+                model:Image,
+                attributes:['imgPath']
+            }, {
+                model:State,
+                attributes:['category']
+            }], where: {online_flag: flag}
+        });
+        return res.status(200).send({result:true,study});
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
 
 
 });
