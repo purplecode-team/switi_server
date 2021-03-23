@@ -71,7 +71,7 @@ module.exports = class User extends Sequelize.Model {
         db.User.hasMany(db.Apply,{foreignKey:'idUser',sourceKey:'id'});
         db.User.hasOne(db.Alarm,{foreignKey:'idUser',sourceKey:'id'});
         db.User.belongsToMany(db.Study,{through:'studyMember'});
-        db.User.belongsToMany(db.Study, {through:'likedList'}); //스크랩 스터디 목록
+        db.User.belongsToMany(db.Study, {through:'likedList',as:'likedStudy'}); //스크랩 스터디 목록
 
 
 
