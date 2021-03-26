@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const { Study,Image,sequelize,Interest,Gu,State,User } = require('../models');
+const { Study,Interest,Gu,State,User,Character,Region } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 const path = require('path');
 const fs = require('fs');
@@ -32,5 +32,41 @@ router.get('/mypage/:id',isLoggedIn,async(req,res)=>{
     }
 
 });
+
+//유저 프로필정보 가져오기 (나이 , 관심지역 , 관심분야 , 나의 성향 , 나의 성격, 자기소개)
+router.get('/myprofile/:id',isLoggedIn,async(req,res)=>{
+    const id = req.params.id;
+    try{
+        const myProfile = await User.findOne({
+            attributes:['age'],
+            include:[{
+                model:Interest,
+                attributes:['category'],
+                through:{attributes:['InterestId']}
+            },{
+                model:State,
+                attributes:['category'],
+                through:{attributes:['StateId']}
+            },{
+                model:Gu,
+                attributes:['gu'],
+                include:[{
+                    model:Region,
+                    attributes:['city']
+                }]
+            },{
+                model:Character,
+                attributes:['content'],
+                through:{attributes:['CharacterId']}
+            }],where:{id}
+        });
+
+        return res.status(200).send({result:true,myProfile});
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
 
 module.exports = router;
