@@ -3,6 +3,7 @@ const multer = require('multer');
 const bcrypt = require('bcrypt');
 const { Study,Image,sequelize,Interest,Gu,State,User } = require('../models');
 const { isLoggedIn } = require('./middlewares');
+const upload = require('./multer');
 const path = require('path');
 const fs = require('fs');
 
@@ -34,11 +35,13 @@ router.get('/mypage/:id',isLoggedIn,async(req,res)=>{
 
 });
 
+
 //회원정보 수정
-router.put('/updateUserinfo',isLoggedIn,async(req,res)=>{
+router.put('/updateUserinfo',isLoggedIn,upload.single('img'),async(req,res)=>{
 
     const id = req.decoded.id; // 유저 id 값 가져오기
     const {nickname,email,newPassword} = req.body;
+    console.log(req.file);
     let {password} = req.body;
 
     try{
@@ -59,7 +62,8 @@ router.put('/updateUserinfo',isLoggedIn,async(req,res)=>{
         await user.update({
             email,
             nickname,
-            password
+            password,
+            profilepath:req.file.filename,
         })
 
         return res.status(200).send({result:true});
