@@ -51,6 +51,51 @@ router.post('/addStudy',isLoggedIn,upload.single('img'),async(req,res)=>{
 
 });
 
+//모집 상세글
+router.get('/studyDetail/:id',isLoggedIn,async(req,res)=>{
+    try{
+        const id = req.params.id; // 스터디 id
+        const study = await Study.findOne({
+            attributes:{
+                include:[
+                    [sequelize.literal(`(
+                    SELECT COUNT(*)
+                    FROM likedList
+                    WHERE
+                    Study.id = likedList.StudyId
+                    )`),
+                    'scrapCount'],
+                ]},
+            include:[{
+                model:User,
+                attributes:['nickname','profilepath'],
+            },{
+                model:Interest,
+                attributes:['category']
+            }, {
+                model:State,
+                attributes:['category']
+            },{
+                model:Gu,
+                attributes:['gu'],
+                include:[{
+                    model:Region,
+                    attributes:['city']
+                }]
+            },{
+                model:Image,
+                attributes:['imgPath']
+            }],where:{id}
+        });
+
+        return res.status(200).send({result:true,study});
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
 //스터디 목록 불러오기
 router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
     const flag = req.params.onlineFlag; //온라인 오프라인 flag
