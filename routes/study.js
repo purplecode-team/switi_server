@@ -137,8 +137,24 @@ router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
         console.error(err);
         return res.status(500).send({result:false});
     }
+});
 
+//모집글 삭제
+router.delete('/deleteStudy/:id',isLoggedIn,async(req,res)=>{
+    const id = req.params.id;
 
+    try{
+
+        await Study.destroy(
+            {where:{id}}
+        )
+
+        return res.status(200).send({result:true});
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
 });
 
 module.exports = router;
