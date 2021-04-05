@@ -157,4 +157,24 @@ router.delete('/deleteStudy/:id',isLoggedIn,async(req,res)=>{
     }
 });
 
+//스터디 모집 마감
+router.put('/updateFlag/:id',isLoggedIn,async(req,res)=>{
+
+    const id = req.params.id; //study id
+
+    try{
+        // 모집여부 flag 1 -> 0 변경
+       await Study.update(
+           {flag:0},
+           {where:{id}}
+       )
+
+        return res.status(200).send({result:true});
+
+   } catch(err){
+       console.error(err);
+       return res.status(500).send({result:false});
+   }
+});
+
 module.exports = router;
