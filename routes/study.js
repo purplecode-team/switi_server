@@ -177,4 +177,46 @@ router.put('/updateFlag/:id',isLoggedIn,async(req,res)=>{
    }
 });
 
+//스터디 스크랩
+router.post('/scrapStudy/:id',isLoggedIn,async(req,res)=>{
+
+    const userId = req.decoded.id;
+    const studyId = req.params.id;
+
+    try{
+        const study = await Study.findOne({where:{id:studyId}});
+        if(study){
+            await study.addLikedUser(userId);
+            return res.status(200).send({result:true});
+        }else{
+            return res.status(500).send({result:false});
+        }
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
+//스크랩 취소
+router.delete('/deleteScrap/:id',isLoggedIn,async(req,res)=>{
+
+    const userId = req.decoded.id;
+    const studyId = req.params.id;
+
+    try{
+        const study = await Study.findOne({where:{id:studyId}});
+        if(study) {
+            await study.removeLikedUser(userId);
+            return res.status(200).send({result:true});
+        }else {
+            return res.status(500).send({result: false});
+        }
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
 module.exports = router;
