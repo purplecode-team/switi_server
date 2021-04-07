@@ -1,5 +1,5 @@
 const express = require('express');
-const { Study,Image,sequelize,Interest,Gu,State,User,Region } = require('../models');
+const { Study,Image,sequelize,Interest,Gu,State,User,Region,Apply } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 const upload = require('./multer');
 const router = express.Router();
@@ -212,6 +212,29 @@ router.delete('/deleteScrap/:id',isLoggedIn,async(req,res)=>{
         }else {
             return res.status(500).send({result: false});
         }
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
+//모집 신청 해당 글이 현재 모집중인 경우 신청 가능
+router.post('/applyStudy/:id',isLoggedIn,async(req,res)=>{
+
+    const idUser = req.decoded.id;
+    const idStudy = req.params.id;
+    const {contact, apply_detail} = req.body;
+
+    try{
+        await Apply.create({
+            contact,
+            apply_detail,
+            idUser,
+            idStudy,
+        });
+
+        return res.status(200).send({result:true});
 
     }catch(err){
         console.error(err);
