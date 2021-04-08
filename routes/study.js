@@ -219,7 +219,7 @@ router.delete('/deleteScrap/:id',isLoggedIn,async(req,res)=>{
     }
 })
 
-//모집 신청 해당 글이 현재 모집중인 경우 신청 가능
+//모집 신청
 router.post('/applyStudy/:id',isLoggedIn,async(req,res)=>{
 
     const idUser = req.decoded.id;
@@ -233,6 +233,26 @@ router.post('/applyStudy/:id',isLoggedIn,async(req,res)=>{
             idUser,
             idStudy,
         });
+
+        return res.status(200).send({result:true});
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
+// 신청 취소
+router.delete('/deleteApply/:id',isLoggedIn,async(req,res)=>{
+
+    const idUser = req.decoded.id;
+    const idStudy = req.params.id;
+
+    try{
+
+        await Apply.destroy({
+            where:{idUser,idStudy}
+        })
 
         return res.status(200).send({result:true});
 
