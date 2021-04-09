@@ -1,5 +1,6 @@
 const express = require('express');
 const { Study,Image,sequelize,Interest,Gu,State,User,Region } = require('../models');
+const {Op} = require('sequelize');
 const { isLoggedIn } = require('./middlewares');
 const upload = require('./multer');
 const router = express.Router();
@@ -96,10 +97,27 @@ router.get('/studyDetail/:id',isLoggedIn,async(req,res)=>{
     }
 })
 
-//스터디 목록 불러오기
+//스터디 목록 불러오기 ( 카테고리, 지역 , 모집대상 )
 router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
     const flag = req.params.onlineFlag; //온라인 오프라인 flag
-    // 아직 지역은 추가 안함
+    const cate = req.query.cate; // 카테고리
+    //const region = req.query.region; // 지역
+    const state1 = req.query.state1; // 모집대상1
+    const state2 = req.query.state2; // 모집대상2
+
+    let whereClause1,whereClause2;
+
+    // 전체 조회
+    if(cate && cate !== 'undefined' && cate !== '0'){
+        whereClause1 = {id:cate}; //카테고리
+    }
+    if(state1 && state1 !== 'undefined' && state1 !== '0'){
+        whereClause2 = {id:state1}; //모집대상
+        if(state2 && state2 !== 'undefined' && state2 !== ''){
+            whereClause2 = {[Op.or]:[{id:state1},{id:state2}]};
+        }
+    }
+
     try{
         const study = await Study.findAll({
             attributes:{include: [
@@ -115,13 +133,15 @@ router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
                 ]},
             include:[{
                 model:Interest,
-                attributes:['category']
+                attributes:['category'],
+                where:whereClause1,
             }, {
                 model:Image,
                 attributes:['imgPath']
             }, {
                 model:State,
-                attributes:['category']
+                attributes:['category'],
+                where:whereClause2,
             },{
                 model:Gu,
                 attributes:['gu'],
