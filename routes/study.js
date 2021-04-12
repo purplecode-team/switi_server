@@ -101,7 +101,7 @@ router.get('/studyDetail/:id',isLoggedIn,async(req,res)=>{
 router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
     const flag = req.params.onlineFlag; //온라인 오프라인 flag
     const cate = req.query.cate; // 카테고리
-    //const region = req.query.region; // 지역
+    const region = req.query.region; // 지역
     const state1 = req.query.state1; // 모집대상1
     const state2 = req.query.state2; // 모집대상2
     const order = req.query.order; // 정렬옵션 ( 인기순 , 최신순 )
@@ -154,6 +154,7 @@ router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
             },{
                 model:Gu,
                 attributes:['gu'],
+                where:{regionId:region},
                 include:[{
                     model:Region,
                     attributes:['city']
