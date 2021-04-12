@@ -104,18 +104,27 @@ router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
     //const region = req.query.region; // 지역
     const state1 = req.query.state1; // 모집대상1
     const state2 = req.query.state2; // 모집대상2
+    const order = req.query.order; // 정렬옵션 ( 인기순 , 최신순 )
 
-    let whereClause1,whereClause2;
+    let whereClause1,whereClause2,whereClause3;
 
     // 전체 조회
     if(cate && cate !== 'undefined' && cate !== '0'){
         whereClause1 = {id:cate}; //카테고리
     }
+
     if(state1 && state1 !== 'undefined' && state1 !== '0'){
         whereClause2 = {id:state1}; //모집대상
         if(state2 && state2 !== 'undefined' && state2 !== ''){
             whereClause2 = {[Op.or]:[{id:state1},{id:state2}]};
         }
+    }
+
+    //정렬
+    if(order === 'update'){ // 최신순
+        whereClause3 = [['createdAt','DESC']];
+    }else if(order === 'count'){ // 인기순
+        whereClause3 = [[sequelize.col('scrapCount'),'DESC']];
     }
 
     try{
@@ -149,8 +158,8 @@ router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
                     model:Region,
                     attributes:['city']
                 }]
-            }], where: {online_flag: flag}
-        });
+            }], where: {online_flag: flag} , order : whereClause3
+    });
         return res.status(200).send({result:true,study});
 
     }catch(err){
