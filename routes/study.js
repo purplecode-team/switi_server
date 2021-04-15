@@ -11,7 +11,7 @@ router.post('/addStudy',isLoggedIn,upload.single('img'),async(req,res)=>{
     console.log(req.file);
     const imgPath = req.file.filename;
     //카테고리(3개 이하) , 지역(3개 이하), 모집대상 , 모집인원, 모임장소, 활동기간, 예정종료일, 문의연락처, 제목 ,내용 , 이미지사진
-    const {online_flag, category, address, recruit_num, detail_address, period, endDate, contact, title, desc } = req.body;
+    const {online_flag, state ,category, address, recruit_num, detail_address, period, endDate, contact, title, desc } = req.body;
     const t = await sequelize.transaction(); // 트랜잭션 생성
     //console.log(req.body);
 
@@ -185,6 +185,53 @@ router.delete('/deleteStudy/:id',isLoggedIn,async(req,res)=>{
         console.error(err);
         return res.status(500).send({result:false});
     }
+});
+
+//모집글 수정
+router.put('/updateStudy/:id',isLoggedIn,upload.single('img'),async(req,res)=>{
+    const id = req.params.id;
+    console.log(req.file);
+    const imgPath = req.file.filename;
+    //카테고리(3개 이하) , 지역(3개 이하), 모집대상 , 모집인원, 모임장소, 활동기간, 예정종료일, 문의연락처, 제목 ,내용 , 이미지사진
+    const {online_flag,state,category, address, recruit_num, detail_address, period, endDate, contact, title, desc } = req.body;
+    const t = await sequelize.transaction(); // 트랜잭션 생성
+
+    try{
+        const study = await Study.findOne({
+            where:{id}
+        });
+
+        if(study) {
+            await study.update({
+                period,
+                detail_address,
+                endDate,
+                contact,
+                title,
+                desc,
+                recruit_num
+            },{transaction: t});
+
+            if (online_flag !== 'true') {
+                await study.setGus(address, {transaction: t}); // 오프라인일 경우 지역 수정
+            }
+            await Image.update({
+                imgPath
+            },{where:{idStudy:id}},{transaction:t});
+            await study.setInterests(category, {transaction: t});
+            await study.setStates(state, {transaction: t});
+            await t.commit();
+
+            return res.status(200).send({result: true,study});
+
+        }
+
+    }catch(err){
+        await t.rollback();
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+
 });
 
 //스터디 모집 마감
