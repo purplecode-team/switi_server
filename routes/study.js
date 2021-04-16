@@ -1,6 +1,5 @@
 const express = require('express');
 const { Study,Image,sequelize,Interest,Gu,State,User,Region } = require('../models');
-const {Op} = require('sequelize');
 const { isLoggedIn } = require('./middlewares');
 const upload = require('./multer');
 const router = express.Router();
@@ -100,31 +99,38 @@ router.get('/studyDetail/:id',isLoggedIn,async(req,res)=>{
 //스터디 목록 불러오기 ( 카테고리, 지역 , 모집대상 )
 router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
     const flag = req.params.onlineFlag; //온라인 오프라인 flag
-    const cate = req.query.cate; // 카테고리
+    const cate = req.query.category; // 카테고리
     const region = req.query.region; // 지역
-    const state1 = req.query.state1; // 모집대상1
-    const state2 = req.query.state2; // 모집대상2
+    const state = req.query.state; // 모집대상1
     const order = req.query.order; // 정렬옵션 ( 인기순 , 최신순 )
 
-    let whereClause1,whereClause2,whereClause3;
+    let cateQuery, stateQuery, regionQuery;
 
-    // 전체 조회
+    // 검색 조건이 있을 경우
     if(cate && cate !== 'undefined' && cate !== '0'){
-        whereClause1 = {id:cate}; //카테고리
+         //카테고리
+        const cateArr = cate.split(':');
+        cateQuery = {id:cateArr};
     }
 
-    if(state1 && state1 !== 'undefined' && state1 !== '0'){
-        whereClause2 = {id:state1}; //모집대상
-        if(state2 && state2 !== 'undefined' && state2 !== ''){
-            whereClause2 = {[Op.or]:[{id:state1},{id:state2}]};
-        }
+    if(state && state !== 'undefined' && state !== '0'){
+        // 모집대상
+        const stateArr = state.split(':');
+        stateQuery = {id:stateArr};
+    }
+
+    if(region && region !== 'undefined' && region !== '0'){
+        // 지역
+        const regionArr = region.split(':');
+        regionQuery = {regionId:regionArr};
     }
 
     //정렬
+    let orderQuery;
     if(order === 'update'){ // 최신순
-        whereClause3 = [['createdAt','DESC']];
+        orderQuery = [['createdAt','DESC']];
     }else if(order === 'count'){ // 인기순
-        whereClause3 = [[sequelize.col('scrapCount'),'DESC']];
+        orderQuery = [[sequelize.col('scrapCount'),'DESC']];
     }
 
     try{
@@ -143,23 +149,23 @@ router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
             include:[{
                 model:Interest,
                 attributes:['category'],
-                where:whereClause1,
+                where:cateQuery,
             }, {
                 model:Image,
                 attributes:['imgPath']
             }, {
                 model:State,
                 attributes:['category'],
-                where:whereClause2,
+                where:stateQuery,
             },{
                 model:Gu,
                 attributes:['gu'],
-                where:{regionId:region},
+                where:regionQuery,
                 include:[{
                     model:Region,
                     attributes:['city']
                 }]
-            }], where: {online_flag: flag} , order : whereClause3
+            }], where: {online_flag: flag} , order : orderQuery
     });
         return res.status(200).send({result:true,study});
 
