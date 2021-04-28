@@ -1,5 +1,5 @@
 const express = require('express');
-const { Study,Image,Apply,studyMember,User } = require('../models');
+const { Study,Image,Apply,studyMember,User,sequelize } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 const upload = require('./multer');
 const router = express.Router();
@@ -78,6 +78,58 @@ router.get('/studyMemList/:id',isLoggedIn,async(req,res)=>{
         return res.status(200).send({result:true,member,applyUser});
     }
     catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
+// 신청 수락
+router.put('/acceptApply/:id',isLoggedIn,async(req,res)=>{
+    const id = req.params.id; // apply Id
+    const t = await sequelize.transaction(); // 트랜잭션 생성
+
+    try{
+        const apply = await Apply.findOne({where:{id:id}});
+
+        if(apply){
+            // 상태 update (대기 -> 수락:1)
+            await apply.update({
+                apply_state:1,
+            },{transaction:t});
+
+            // 수락 후 스터디 멤버에도 추가하기
+            await studyMember.create({
+                StudyId:apply.idStudy,
+                UserId:apply.idUser,
+                contact:apply.contact
+            },{transaction:t});
+            await t.commit();
+        }
+
+        return res.status(200).send({result:true});
+
+    }catch(err){
+        await t.rollback();
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
+//신청 거절
+router.put('/rejectApply/:id',isLoggedIn,async(req,res)=>{
+    const id = req.params.id; // apply Id
+    try{
+        const apply = await Apply.findOne({where:{id:id}});
+
+        if(apply){
+            // 거절:2
+            await apply.update({
+                apply_state:2
+            })
+        }
+
+        return res.status(200).send({result:true});
+    }catch(err){
         console.error(err);
         return res.status(500).send({result:false});
     }
