@@ -135,4 +135,42 @@ router.put('/rejectApply/:id',isLoggedIn,async(req,res)=>{
     }
 })
 
+// 신청서 보기 ( 닉네임 , 프로필이미지 , 신청 내용 )
+router.get('/getApplyInfo/:id',isLoggedIn,async(req,res)=>{
+    const id = req.params.id; // apply id
+    try{
+        const applyInfo = await Apply.findOne({
+            attributes:['id','apply_detail','apply_state'],
+            include:[{
+                model:User,
+                attributes:['id','nickname','profilepath']
+            }]
+        });
+
+        return res.status(200).send({result:true,applyInfo});
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
+// 스터디원 탈퇴 처리
+router.delete('/deleteMember/:StudyId/:UserId',isLoggedIn,async(req,res)=>{
+    const StudyId = req.params.StudyId; // 스터디 id
+    const UserId = req.params.UserId; // 유저 id
+
+    try{
+
+        await studyMember.destroy({
+            where:{StudyId,UserId}
+        })
+        return res.status(200).send({result:true});
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
 module.exports = router;
