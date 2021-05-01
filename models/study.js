@@ -40,6 +40,10 @@ module.exports = class Study extends Sequelize.Model {
                 type:Sequelize.BOOLEAN,
                 defaultValue:true,
             },
+            end_flag:{
+                type:Sequelize.BOOLEAN,
+                defaultValue:false,
+            },
             createdAt:{
                 type:Sequelize.DATE,
                 allowNull:false,

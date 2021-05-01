@@ -173,4 +173,38 @@ router.delete('/deleteMember/:StudyId/:UserId',isLoggedIn,async(req,res)=>{
     }
 })
 
+// 스터디 종료
+router.put('/endStudy/:id',isLoggedIn,async(req,res)=>{
+    const id = req.params.id; // 스터디 id
+    try{
+        //end_flag: 0->1 변경
+        await Study.update({
+            end_flag:1,
+        },{where:{id}})
+
+        return res.status(200).send({result:true});
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
+// 스터디 연장
+router.put('/updateEndDate/:id',isLoggedIn,async(req,res)=>{
+    const id = req.params.id; // 스터디 id
+    const date = req.body.endDate;
+    try{
+        console.log(date);
+        await Study.update({
+                endDate:date
+        },{where:{id}});
+
+        return res.status(200).send({result:true});
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
 module.exports = router;
