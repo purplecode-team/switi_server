@@ -1,7 +1,6 @@
 const express = require('express');
 const { Study,Image,Apply,studyMember,User,sequelize } = require('../models');
 const { isLoggedIn } = require('./middlewares');
-const upload = require('./multer');
 const router = express.Router();
 
 // 스터디 관리 - 내 모집글
