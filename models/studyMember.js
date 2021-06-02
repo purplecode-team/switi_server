@@ -6,6 +6,11 @@ module.exports = class studyMember extends Sequelize.Model {
             contact:{
                 type: Sequelize.STRING,
                 allowNull: false,
+            },
+            leader:{
+                type: Sequelize.BOOLEAN,
+                allowNull: false,
+                defaultValue:false
             }
         }, {
             sequelize,
