@@ -1,5 +1,5 @@
 const express = require('express');
-const { Study,Image,sequelize,Interest,Gu,State,User,Region } = require('../models');
+const { Study,Image,sequelize,Interest,Gu,State,User,Region,studyMember } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 const upload = require('./multer');
 const router = express.Router();
@@ -39,6 +39,12 @@ router.post('/addStudy',isLoggedIn,upload.single('img'),async(req,res)=>{
         }
         await study.addInterest(category,{transaction:t}); // 카테고리 추가
         await study.addState(state,{transaction:t});
+        await studyMember.create({
+            StudyId:study.id,
+            UserId:idUser,
+            contact:contact,
+            leader:1 // 모집장 flag
+        },{transaction:t});
         await t.commit();
 
         return res.status(200).send({result:true,study});
