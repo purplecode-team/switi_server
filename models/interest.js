@@ -20,5 +20,6 @@ module.exports = class Interest extends Sequelize.Model {
 
     static associate(db) {
         db.Interest.belongsToMany(db.Study, {through:'studyCategory'});
+        db.Interest.belongsToMany(db.User,{through:'myInterest'});
     };
 }

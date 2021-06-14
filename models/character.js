@@ -18,4 +18,8 @@ module.exports = class Character extends Sequelize.Model {
         });
     }
 
+    static associate(db) {
+        db.Character.belongsToMany(db.User,{through:'myCharacter'});
+    };
+
 }

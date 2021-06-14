@@ -3,7 +3,9 @@ const session = require('express-session');
 const dotenv = require('dotenv');
 dotenv.config();
 
+
 const studyRouter = require('./routes/study');
+const authRouter = require('./routes/auth');
 const { sequelize } = require('./models');
 
 const app = express();
@@ -25,6 +27,7 @@ app.use(session({
 }));
 
 app.use('/study',studyRouter);
+app.use('/auth',authRouter);
 
 app.listen(4000, () => {
   console.log('start server');
