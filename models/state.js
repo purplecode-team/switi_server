@@ -10,8 +10,8 @@ module.exports = class State extends Sequelize.Model {
         }, {
             sequelize,
             timestamps:false,
-            modelName:'Interest',
-            tableName:'Interest',
+            modelName:'State',
+            tableName:'State',
             paranoid:false,
             charset:'utf8mb4',
             collate:'utf8mb4_general_ci',
@@ -19,6 +19,7 @@ module.exports = class State extends Sequelize.Model {
     }
 
     static associate(db) {
+        db.State.belongsToMany(db.Study, {through:'studyTarget'}); //스터디 대상
         db.State.belongsToMany(db.User,{through:'myState'});
     };
 }

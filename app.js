@@ -3,6 +3,8 @@ const session = require('express-session');
 const dotenv = require('dotenv');
 dotenv.config();
 
+
+const studyRouter = require('./routes/study');
 const authRouter = require('./routes/auth');
 const { sequelize } = require('./models');
 
@@ -19,11 +21,12 @@ sequelize.sync({force:false})
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(session({
-    resave:false,
-    saveUninitialized:false,
-    secret: process.env.SECRET_KEY,
+  resave:false,
+  saveUninitialized:false,
+  secret: process.env.SECRET_KEY,
 }));
 
+app.use('/study',studyRouter);
 app.use('/auth',authRouter);
 
 app.listen(4000, () => {

@@ -6,10 +6,6 @@ module.exports = class Evaluation extends Sequelize.Model {
             score:{ //평가점수
                 type: Sequelize.INTEGER,
                 allowNull: false,
-            },
-            startDate:{
-                type:Sequelize.DATE,
-                allowNull: false,
             }
         }, {
             sequelize,

@@ -10,8 +10,8 @@ module.exports = class Region extends Sequelize.Model {
         }, {
             sequelize,
             timestamps:false,
-            modelName:'Interest',
-            tableName:'Interest',
+            modelName:'Region',
+            tableName:'Region',
             paranoid:false,
             charset:'utf8mb4',
             collate:'utf8mb4_general_ci',
