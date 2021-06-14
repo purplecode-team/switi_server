@@ -15,10 +15,6 @@ module.exports = class Study extends Sequelize.Model {
                 type:Sequelize.STRING,
                 allowNull:false,
             },
-            target:{
-                type:Sequelize.STRING,
-                allowNull:false,
-            },
             recruit_num:{
                 type:Sequelize.INTEGER,
                 allowNull:false,
