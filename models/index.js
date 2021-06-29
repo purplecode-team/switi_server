@@ -70,7 +70,7 @@ Region.associate(db);
 Report.associate(db);
 Apply.associate(db);
 State.associate(db);
-Interest.associate(db);
 Character.associate(db);
+Interest.associate(db);
 
 module.exports = db;
