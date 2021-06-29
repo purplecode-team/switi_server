@@ -7,6 +7,7 @@ dotenv.config();
 const studyRouter = require('./routes/study');
 const userRouter = require('./routes/user');
 const authRouter = require('./routes/auth');
+const userRouter = require('./routes/user');
 const { sequelize } = require('./models');
 
 const app = express();
@@ -30,6 +31,7 @@ app.use(session({
 app.use('/study',studyRouter);
 app.use('/user',userRouter);
 app.use('/auth',authRouter);
+app.use('/user',userRouter);
 
 app.listen(4000, () => {
   console.log('start server');
