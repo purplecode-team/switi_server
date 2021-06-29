@@ -4,7 +4,7 @@ module.exports = class Study extends Sequelize.Model {
     static init(sequelize){
         return super.init({
             online_flag:{
-                type: Sequelize.INTEGER,
+                type: Sequelize.BOOLEAN,
                 allowNull: false,
             },
             title:{
@@ -15,18 +15,6 @@ module.exports = class Study extends Sequelize.Model {
                 type:Sequelize.STRING,
                 allowNull:false,
             },
-            address:{
-                type:Sequelize.STRING,
-                allowNull:false,
-            },
-            category:{
-                type:Sequelize.STRING,
-                allowNull:false,
-            },
-            target:{
-                type:Sequelize.STRING,
-                allowNull:false,
-            },
             recruit_num:{
                 type:Sequelize.INTEGER,
                 allowNull:false,
@@ -34,7 +22,7 @@ module.exports = class Study extends Sequelize.Model {
             },
             detail_address:{
                 type:Sequelize.STRING,
-                allowNull:false,
+                allowNull:true,
             },
             period:{
                 type:Sequelize.STRING,
@@ -47,6 +35,10 @@ module.exports = class Study extends Sequelize.Model {
             flag:{
                 type:Sequelize.BOOLEAN,
                 defaultValue:true,
+            },
+            end_flag:{
+                type:Sequelize.BOOLEAN,
+                defaultValue:false,
             },
             createdAt:{
                 type:Sequelize.DATE,
@@ -70,11 +62,15 @@ module.exports = class Study extends Sequelize.Model {
 
     static associate(db){
         db.Study.hasMany(db.Report,{foreignKey:'idStudy', sourceKey:'id'});
-        db.Study.hasMany(db.Apply,{ foreignKey:'idStudy',sourceKey:'id'});
+        db.Study.hasMany(db.Apply,{ foreignKey:'idStudy',sourceKey:'id',onDelete:'cascade'});
         db.Study.belongsTo(db.User,{foreignKey:'idUser',targetKey:'id'}); // 스터디 작성자
         db.Study.hasMany(db.Evaluation,{foreignKey:'idStudy',sourceKey:'id'});
-        db.Study.hasMany(db.Image,{foreignKey:'idStudy',sourceKey:'id'});
+        db.Study.hasMany(db.Image,{foreignKey:'idStudy',sourceKey:'id',onDelete:'cascade'});
         db.Study.belongsToMany(db.User,{through:'studyMember'});
+        db.Study.belongsToMany(db.Interest, {through:'studyCategory'}); // 카테고리 n:m
+        db.Study.belongsToMany(db.State, {through:'studyTarget'}); // 스터디 대상
+        db.Study.belongsToMany(db.Gu, {through:'studyRegion'}); // 스터디 지역
+        db.Study.belongsToMany(db.User, {through:'likedList',as:'likedUser'}); // 스크랩 스터디 목록
     }
 
 

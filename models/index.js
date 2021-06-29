@@ -17,6 +17,7 @@ const Region = require('./region');
 const Report = require('./report');
 const State = require('./state');
 const Terms = require('./terms');
+const studyMember = require('./studyMember');
 
 const db = {};
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
@@ -39,6 +40,7 @@ db.Report = Report;
 db.State = State;
 db.Study = Study;
 db.Terms = Terms;
+db.studyMember = studyMember;
 
 User.init(sequelize);
 Study.init(sequelize);
@@ -56,6 +58,7 @@ Region.init(sequelize);
 Report.init(sequelize);
 State.init(sequelize);
 Terms.init(sequelize);
+studyMember.init(sequelize);
 
 User.associate(db);
 Study.associate(db);
@@ -67,7 +70,7 @@ Region.associate(db);
 Report.associate(db);
 Apply.associate(db);
 State.associate(db);
-Interest.associate(db);
 Character.associate(db);
+Interest.associate(db);
 
 module.exports = db;
