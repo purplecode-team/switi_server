@@ -150,6 +150,9 @@ router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
                 model:Interest,
                 attributes:['category'],
                 where:cateQuery,
+            },{
+            model:User,
+            attributes:['nickname'],
             }, {
                 model:Image,
                 attributes:['imgPath']
