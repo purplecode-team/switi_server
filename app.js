@@ -28,6 +28,7 @@ app.use(session({
 
 app.use('/study',studyRouter);
 app.use('/auth',authRouter);
+app.use('/images',express.static(__dirname + '/images'));
 
 app.listen(4000, () => {
   console.log('start server');

@@ -26,7 +26,7 @@ router.post('/addStudy',isLoggedIn,upload.single('img'),async(req,res)=>{
             desc,
             recruit_num,
             Images: [{
-                imgPath: imgPath,
+                imgPath: "/images/" + imgPath ,
             }]
         }, {
             include: [
