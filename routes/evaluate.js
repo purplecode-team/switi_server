@@ -4,6 +4,27 @@ const { Study,Image,studyMember,User,sequelize,Evaluation } = require('../models
 const { isLoggedIn } = require('./middlewares');
 const router = express.Router();
 
+//상호평가 페이지 -> 상대 닉네임 & 프로필 출력
+router.get('/evaluatePage',isLoggedIn,async(req,res)=>{
+
+    const idMember = req.query.idMember; // 상대 스터디원 id
+    const idStudy = req.query.idStudy; // 스터디 id
+
+    try{
+        const user = await User.findOne({
+            attributes: ['nickname','profilePath'],
+            where: {id : idMember}
+        });
+
+        return res.status(200).send({result:true,user,idStudy});
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
+
 //상호평가
 router.post('/peerEvaluate',isLoggedIn,async(req,res)=>{
 
