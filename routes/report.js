@@ -1,4 +1,5 @@
 const express = require('express');
+const { reportedSugar } = require("./sugarUtil");
 const { Study,Image,studyMember,User,sequelize,Report } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 const router = express.Router();
@@ -71,6 +72,9 @@ router.post('/reportUser/:studyId/:memberId',isLoggedIn,async(req,res)=>{
             idUser:userId,
             state:0,
         })
+
+        // 신고 시 당도 감소 
+        await reportedSugar({idUser:memberId});
 
         return res.status(200).send({result:true});
 
