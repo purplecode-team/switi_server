@@ -130,4 +130,29 @@ router.post('/login',async(req,res,next)=>{
 
 });
 
+// 회원 탈퇴 기능
+router.delete('/deleteUser',isLoggedIn,async(req,res)=>{
+
+    const id = req.decoded.id; // 현재 로그인한 아이디
+
+    try{
+
+         const result = await User.destroy({
+            where:{id:id}
+         })
+
+        if(result){
+            return res.status(200).send({result:true});
+        }
+
+        return res.status(200).send({result:false});
+
+
+    }catch(err){
+        console.log(err);
+        return res.status(500).send({result:false});
+    }
+})
+
+
 module.exports = router;
