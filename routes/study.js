@@ -2,6 +2,7 @@ const express = require('express');
 const { Study,Image,sequelize,Interest,Gu,State,User,Region,Apply } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 const upload = require('./multer');
+const { cancelSugar } = require("./sugarUtil");
 const router = express.Router();
 
 //스터디 작성
@@ -253,6 +254,8 @@ router.delete('/deleteApply/:id',isLoggedIn,async(req,res)=>{
         await Apply.destroy({
             where:{idUser,idStudy}
         })
+
+        await cancelSugar({idUser:idUser}); // 신청 취소 시 당도 -1
 
         return res.status(200).send({result:true});
 
