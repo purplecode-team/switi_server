@@ -1,4 +1,5 @@
 const express = require('express');
+const { isEvaluated } = require("./middlewares");
 const { updateSugar } = require("./sugarUtil");
 const { Study,Image,studyMember,User,sequelize,Evaluation } = require('../models');
 const { isLoggedIn } = require('./middlewares');
@@ -26,7 +27,7 @@ router.get('/evaluatePage',isLoggedIn,async(req,res)=>{
 
 
 //상호평가
-router.post('/peerEvaluate',isLoggedIn,async(req,res)=>{
+router.post('/peerEvaluate',isLoggedIn,isEvaluated,async(req,res)=>{
 
     const idUser = req.decoded.id; // 평가 한 유저 id
     const idMember = req.query.idMember; // 평가 받은 유저 id
