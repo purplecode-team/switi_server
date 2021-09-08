@@ -6,11 +6,11 @@ module.exports = class User extends Sequelize.Model {
             email: {
                 type: Sequelize.STRING,
                 allowNull: false,
-                unique: true,
             },
             password: {
                 type:Sequelize.STRING,
                 allowNull:false,
+                defaultValue: '0',
             },
             gender:{
                 type:Sequelize.INTEGER,
@@ -19,10 +19,10 @@ module.exports = class User extends Sequelize.Model {
             age:{
                 type:Sequelize.INTEGER,
                 allowNull:false,
+                defaultValue: '0',
             },
             nickname:{
                 type:Sequelize.STRING,
-                unique:true,
                 allowNull:false,
             },
             aboutme:{
@@ -42,6 +42,10 @@ module.exports = class User extends Sequelize.Model {
                 type:Sequelize.BOOLEAN,
                 allowNull:false,
                 defaultValue: true,
+            },
+            provider:{ // 소셜 로그인 
+                type:Sequelize.STRING,
+                allowNull:true,
             },
             certification:{
                 type: Sequelize.BOOLEAN,

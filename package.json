@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/purplecode-team/switi_server#readme",
   "dependencies": {
+    "axios": "^0.21.3",
     "bcrypt": "^5.0.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
