@@ -6,6 +6,7 @@ dotenv.config();
 
 const studyRouter = require('./routes/study');
 const authRouter = require('./routes/auth');
+const cateRouter = require('./routes/category');
 const { sequelize } = require('./models');
 
 const app = express();
@@ -28,6 +29,7 @@ app.use(session({
 
 app.use('/study',studyRouter);
 app.use('/auth',authRouter);
+app.use('/category',cateRouter);
 app.use('/images',express.static(__dirname + '/images'));
 
 app.listen(4000, () => {
