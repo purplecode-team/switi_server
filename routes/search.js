@@ -46,9 +46,9 @@ router.post('/searchStudy',isLoggedIn,async(req,res)=>{
                     attributes:['city']
                 }]
             }],where:{
-                title:{
+                [Op.or]: [{title:{
                     [Op.like]:`%${keyword}%` //유사검색
-                }
+                }},{desc: {[Op.like]:`%${keyword}%`}}]
             }
         });
 
