@@ -6,10 +6,13 @@ const smtpTransport = nodemailer.createTransport({
     service:"gmail",
     host:'smtp.gmail.com',
     port:'587',
-    secure:'false',
+    secure:true,
     auth: {
-        user:process.env.SWITI_EMAIL,
-        pass:process.env.SWITI_PASSWORD,
+        type:'OAuth2',
+        user:process.env.OAUTH_USER,
+        clientId:process.env.OAUTH_CLIENT_ID,
+        clientSecret: process.env.OAUTH_CLIENT_SECRET,
+        refreshToken: process.env.OAUTH_REFRESH_TOKEN,
     },
 });
 
