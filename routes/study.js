@@ -1,6 +1,5 @@
 const express = require('express');
-const { Study,Image,sequelize,Interest,Gu,State,User,Region,studyMember } = require('../models');
-const { Study,Image,sequelize,Interest,Gu,State,User,Region,Apply } = require('../models');
+const { Study,Image,sequelize,Interest,Gu,State,User,Region,Apply,studyMember } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 const upload = require('./multer');
 const { cancelSugar } = require("./sugarUtil");

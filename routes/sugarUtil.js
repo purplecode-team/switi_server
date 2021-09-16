@@ -27,32 +27,6 @@ const updateSugar = async (req) => {
       console.error(err);
     }
 
-  }
-
-
-  const score = req.score;
-  const id = req.idMember;
-
-  try{
-
-    // 기존 당도 꺼내오기
-    const user = await User.findOne({
-      attributes: ['sugar'],
-      where: {id : id}
-    })
-
-    const newScore = parseInt(user.sugar)+parseInt(score);
-    //console.log("newScore"+newScore);
-
-    // 수정
-    await User.update({
-      sugar : newScore
-    },{where:{id : id}})
-
-  }catch(err){
-    console.error(err);
-  }
-
 }
 
 //신고 당했을 경우 -10
