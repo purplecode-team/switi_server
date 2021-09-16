@@ -1,17 +1,17 @@
 const Sequelize = require('sequelize');
 
-module.exports = class Region extends Sequelize.Model {
+module.exports = class Search extends Sequelize.Model {
     static init(sequelize){
         return super.init({
-            city:{
-                type: Sequelize.STRING(200),
-                allowNull: false,
-            },
+            keyword:{
+                type:Sequelize.STRING,
+                allowNull:false
+            }
         }, {
             sequelize,
             timestamps:false,
-            modelName:'Region',
-            tableName:'Region',
+            modelName:'Search',
+            tableName:'Search',
             paranoid:false,
             charset:'utf8mb4',
             collate:'utf8mb4_general_ci',
@@ -19,6 +19,7 @@ module.exports = class Region extends Sequelize.Model {
     }
 
     static associate(db) {
-        db.Region.hasMany(db.Gu,{ foreignKey: 'regionId', sourceKey: 'id'});
+        db.Search.belongsTo(db.User,{foreignKey:'idUser', targetKey:'id'});
+
     };
 }
