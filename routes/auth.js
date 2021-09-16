@@ -129,6 +129,7 @@ router.post('/login',async(req,res,next)=>{
 
 });
 
+
 // 회원 탈퇴 기능
 router.delete('/deleteUser',isLoggedIn,async(req,res)=>{
 
