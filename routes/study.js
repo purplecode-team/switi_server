@@ -1,7 +1,9 @@
 const express = require('express');
-const { Study,Image,sequelize,Interest,Gu,State,User,Region } = require('../models');
+const { Study,Image,sequelize,Interest,Gu,State,User,Region,studyMember } = require('../models');
+const { Study,Image,sequelize,Interest,Gu,State,User,Region,Apply } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 const upload = require('./multer');
+const { cancelSugar } = require("./sugarUtil");
 const router = express.Router();
 
 //스터디 작성
@@ -26,7 +28,7 @@ router.post('/addStudy',isLoggedIn,upload.single('img'),async(req,res)=>{
             desc,
             recruit_num,
             Images: [{
-                imgPath: imgPath,
+                imgPath: "/images/" + imgPath ,
             }]
         }, {
             include: [
@@ -39,6 +41,12 @@ router.post('/addStudy',isLoggedIn,upload.single('img'),async(req,res)=>{
         }
         await study.addInterest(category,{transaction:t}); // 카테고리 추가
         await study.addState(state,{transaction:t});
+        await studyMember.create({
+            StudyId:study.id,
+            UserId:idUser,
+            contact:contact,
+            leader:1 // 모집장 flag
+        },{transaction:t});
         await t.commit();
 
         return res.status(200).send({result:true,study});
@@ -150,6 +158,9 @@ router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
                 model:Interest,
                 attributes:['category'],
                 where:cateQuery,
+            },{
+            model:User,
+            attributes:['nickname'],
             }, {
                 model:Image,
                 attributes:['imgPath']
@@ -295,6 +306,51 @@ router.delete('/deleteScrap/:id',isLoggedIn,async(req,res)=>{
         }else {
             return res.status(500).send({result: false});
         }
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
+//모집 신청
+router.post('/applyStudy/:id',isLoggedIn,async(req,res)=>{
+
+    const idUser = req.decoded.id;
+    const idStudy = req.params.id;
+    const {contact, apply_detail} = req.body;
+
+    try{
+        await Apply.create({
+            contact,
+            apply_detail,
+            idUser,
+            idStudy,
+        });
+
+        return res.status(200).send({result:true});
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
+// 신청 취소
+router.delete('/deleteApply/:id',isLoggedIn,async(req,res)=>{
+
+    const idUser = req.decoded.id;
+    const idStudy = req.params.id;
+
+    try{
+
+        await Apply.destroy({
+            where:{idUser,idStudy}
+        })
+
+        await cancelSugar({idUser:idUser}); // 신청 취소 시 당도 -1
+
+        return res.status(200).send({result:true});
 
     }catch(err){
         console.error(err);

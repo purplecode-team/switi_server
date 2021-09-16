@@ -10,6 +10,7 @@ module.exports = class User extends Sequelize.Model {
             password: {
                 type:Sequelize.STRING,
                 allowNull:false,
+                defaultValue: '0',
             },
             gender:{
                 type:Sequelize.INTEGER,
@@ -18,10 +19,11 @@ module.exports = class User extends Sequelize.Model {
             age:{
                 type:Sequelize.INTEGER,
                 allowNull:false,
+                defaultValue: '0',
             },
             nickname:{
-                type:Sequelize.STRING(100),
-                allowNull:false,
+                type:Sequelize.STRING,
+                allowNull:true,
             },
             aboutme:{
                 type:Sequelize.STRING,
@@ -40,6 +42,10 @@ module.exports = class User extends Sequelize.Model {
                 type:Sequelize.BOOLEAN,
                 allowNull:false,
                 defaultValue: true,
+            },
+            provider:{ // 소셜 로그인 
+                type:Sequelize.STRING,
+                allowNull:true,
             },
             certification:{
                 type: Sequelize.BOOLEAN,
@@ -68,6 +74,7 @@ module.exports = class User extends Sequelize.Model {
         db.User.hasMany(db.Report,{foreignKey:'idUser',sourceKey:'id'});
         db.User.hasMany(db.Report,{foreignKey:'idMember',sourceKey:'id'});
         db.User.hasMany(db.Apply,{foreignKey:'idUser',sourceKey:'id'});
+        db.User.hasMany(db.Search, {foreignKey:'idUser', sourceKey:'id'});
         db.User.hasOne(db.Alarm,{foreignKey:'idUser',sourceKey:'id'});
         db.User.belongsToMany(db.Study,{through:'studyMember'});
         db.User.belongsToMany(db.Interest,{through:'myInterest'});
@@ -75,11 +82,6 @@ module.exports = class User extends Sequelize.Model {
         db.User.belongsToMany(db.Gu,{through:'myRegion'});
         db.User.belongsToMany(db.State,{through:'myState'});
         db.User.belongsToMany(db.Study, {through:'likedList',as:'likedStudy'}); //스크랩 스터디 목록
-        db.User.belongsToMany(db.Interest,{through:'myInterest'});
-        db.User.belongsToMany(db.Character,{through:'myCharacter'});
-        db.User.belongsToMany(db.Gu,{through:'myRegion'});
-        db.User.belongsToMany(db.State,{through:'myState'});
-
 
 
     };

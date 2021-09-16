@@ -6,10 +6,13 @@ const smtpTransport = nodemailer.createTransport({
     service:"gmail",
     host:'smtp.gmail.com',
     port:'587',
-    secure:'false',
+    secure:true,
     auth: {
-        user:process.env.SWITI_EMAIL,
-        pass:process.env.SWITI_PASSWORD,
+        type:'OAuth2',
+        user:process.env.OAUTH_USER,
+        clientId:process.env.OAUTH_CLIENT_ID,
+        clientSecret: process.env.OAUTH_CLIENT_SECRET,
+        refreshToken: process.env.OAUTH_REFRESH_TOKEN,
     },
 });
 
@@ -34,6 +37,26 @@ module.exports = {
             await User.update({certificationCode:num},{where:{email}});
         }catch(err){
             console.error(err);
+            return res.status(500).send({result:false});
+        }
+
+    },
+
+    //인증번호 비교
+    compareCode: async (email,inputCode,res) => {
+        try{
+            const user = await User.findOne({where:{email:email}});
+            if(inputCode == user.certificationCode) {
+                // 코드가 일치하면 인증번호값 null 로 변경
+                console.log("코드 일치");
+                await User.update(
+                    {certificationCode: null, certification: true},
+                    {where: {email: email}});
+            }else{
+                return res.status(404).send({result:false});
+            }
+        }catch(err){
+            console.log(err);
             return res.status(500).send({result:false});
         }
 
