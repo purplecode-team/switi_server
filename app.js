@@ -10,6 +10,7 @@ const searchRouter = require('./routes/search'); //검색라우터
 const reportRouter = require('./routes/report'); // 신고하기
 const evaluateRouter = require('./routes/evaluate'); //상호평가 라우터
 const authRouter = require('./routes/auth');
+const socialLoginRouter = require('./routes/socialLogin');
 const cateRouter = require('./routes/category');
 const { sequelize } = require('./models');
 
@@ -37,6 +38,7 @@ app.use('/search',searchRouter);
 app.use('/report',reportRouter); // 신고하기
 app.use('/evaluate',evaluateRouter);
 app.use('/auth',authRouter);
+app.use('/socialLogin',socialLoginRouter);
 app.use('/category',cateRouter);
 app.use('/images',express.static(__dirname + '/images'));
 
