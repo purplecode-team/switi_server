@@ -1,9 +1,36 @@
 const express = require('express');
+const session = require('express-session');
+const dotenv = require('dotenv');
+dotenv.config();
+
+
+const studyRouter = require('./routes/study');
+const authRouter = require('./routes/auth');
+const cateRouter = require('./routes/category');
+const { sequelize } = require('./models');
+
 const app = express();
 
-app.get('/api', (req, res) => {
-  res.send('hello');
-});
+sequelize.sync({force:false})
+    .then(() => {
+      console.log('데이터베이스 연결 성공');
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
+app.use(session({
+  resave:false,
+  saveUninitialized:false,
+  secret: process.env.SECRET_KEY,
+}));
+
+app.use('/study',studyRouter);
+app.use('/auth',authRouter);
+app.use('/category',cateRouter);
+app.use('/images',express.static(__dirname + '/images'));
 
 app.listen(4000, () => {
   console.log('start server');
