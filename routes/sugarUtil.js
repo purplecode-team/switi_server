@@ -4,6 +4,32 @@ const { User, studyMember } = require('../models');
 //상호평가 시
 const updateSugar = async (req) => {
 
+    const score = req.score;
+    const id = req.idMember;
+
+    try{
+
+      // 기존 당도 꺼내오기
+      const user = await User.findOne({
+        attributes: ['sugar'],
+        where: {id : id}
+      })
+
+      const newScore = parseInt(user.sugar)+parseInt(score);
+      //console.log("newScore"+newScore);
+
+      // 수정
+      await User.update({
+        sugar : newScore
+      },{where:{id : id}})
+
+    }catch(err){
+      console.error(err);
+    }
+
+  }
+
+
   const score = req.score;
   const id = req.idMember;
 
