@@ -20,5 +20,6 @@ module.exports = class State extends Sequelize.Model {
 
     static associate(db) {
         db.State.belongsToMany(db.Study, {through:'studyTarget'}); //스터디 대상
+        db.State.belongsToMany(db.User,{through:'myState'});
     };
 }

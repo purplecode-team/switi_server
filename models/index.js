@@ -74,5 +74,7 @@ Report.associate(db);
 Apply.associate(db);
 State.associate(db);
 Search.associate(db);
+Interest.associate(db);
+Character.associate(db);
 
 module.exports = db;
