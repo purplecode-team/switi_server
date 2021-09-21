@@ -40,8 +40,8 @@ router.put('/setProfile',isLoggedIn,async(req,res)=>{
 
 
 //유저 마이페이지 ( 당도 , 스크랩 수, 닉네임, 프로필사진)
-router.get('/myPage/:id',isLoggedIn,async(req,res)=>{
-    const id = req.params.id;
+router.get('/myPage',isLoggedIn,async(req,res)=>{
+    const id = req.decoded.id;
     try{
 
         const myPage = await User.findOne({
@@ -66,9 +66,9 @@ router.get('/myPage/:id',isLoggedIn,async(req,res)=>{
 });
 
 
-//유저 프로필정보 가져오기 (나이 , 관심지역 , 관심분야 , 나의 성향 , 나의 성격, 자기소개)
-router.get('/myProfile/:id',isLoggedIn,async(req,res)=>{
-    const id = req.params.id;
+//내 프로필 (나이 , 관심지역 , 관심분야 , 나의 성향 , 나의 성격, 자기소개)
+router.get('/myProfile',isLoggedIn,async(req,res)=>{
+    const id = req.decoded.id;
     try{
         const myProfile = await User.findOne({
             attributes:['age','aboutme'],
@@ -101,6 +101,42 @@ router.get('/myProfile/:id',isLoggedIn,async(req,res)=>{
         return res.status(500).send({result:false});
     }
 });
+
+// 유저 프로필 조회 (상대방 프로필)
+router.get('/userProfile/:id',isLoggedIn,async(req,res)=>{
+    const id = req.params.id;
+    try{
+        const userProfile = await User.findOne({
+            attributes:['age','aboutme','sugar','nickname','profilepath'],
+            include:[{
+                model:Interest,
+                attributes:['category'],
+                through:{attributes:['InterestId']}
+            },{
+                model:State,
+                attributes:['category'],
+                through:{attributes:['StateId']}
+            },{
+                model:Gu,
+                attributes:['gu'],
+                include:[{
+                    model:Region,
+                    attributes:['city']
+                }]
+            },{
+                model:Character,
+                attributes:['content'],
+                through:{attributes:['CharacterId']}
+            }],where:{id}
+        })
+
+        return res.status(200).send({result:true,userProfile});
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
 
 //유저 프로필 수정 (나이 , 관심지역 , 관심분야 , 나의 성향 , 나의 성격, 자기소개)
 router.put('/updateProfile',isLoggedIn,async(req,res)=>{
