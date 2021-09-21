@@ -1,6 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const socialLogin = require("./socialLoginUtil");
+const qs = require('querystring');
 const router = express.Router();
 
 //네이버 로그인 test
@@ -37,9 +38,13 @@ router.get('/callback',async(req,res)=>{
          'Authorization': `Bearer ${login_token}`
        },
      });
-     console.log(info);
 
-     const token = await socialLogin({ response:info.data.response, provider}); // 로그인
+     const email = info.data.response.email;
+     const nickname = info.data.response.nickname;
+
+     console.log(email,nickname);
+
+     const token = await socialLogin({ email,nickname,provider}); // 로그인
      return res.status(200).send({result:true,token});
 
    }catch(err){
@@ -56,6 +61,7 @@ router.get('/kakaoLogin',async(req,res)=>{
   const redirectURI = 'http://127.0.0.1:4000/socialLogin/kakao';
 
   const URL = 'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id='+client_id+'&redirect_uri='+redirectURI;
+  console.log(URL);
 
   return res.redirect(URL);
 
@@ -63,6 +69,8 @@ router.get('/kakaoLogin',async(req,res)=>{
 
 //카카오 로그인 callback
 router.get('/kakao',async(req,res)=>{
+  console.log("callback");
+  console.log(req.query);
   const code = req.query.code;
   const provider = 'Kakao';
 
@@ -74,31 +82,35 @@ router.get('/kakao',async(req,res)=>{
   try{
 
     //const TOKEN_URL = ;
-    const { response } = await axios.post(
-      "https://kauth.kakao.com/oauth/token"
-    ,{
-      grant_type:'authorization_code',
-      client_id:client_id,
-      redirect_url:'http://127.0.0.1:4000/socialLogin/kakao',
-      code:code,
-      client_secret:client_secret,
-    },{
+    const response = await axios({
+      method: 'POST',
+      url: "https://kauth.kakao.com/oauth/token",
       headers: {
         "content-type": "application/x-www-form-urlencoded"
       },
+      data:qs.stringify({
+        grant_type: 'authorization_code',
+        client_id: client_id,
+        redirect_uri:'http://127.0.0.1:4000/socialLogin/kakao',
+        code,
+        client_secret:client_secret,
+      })
     });
 
-    const login_token = response.data; // 발급된 토큰 저장
-    console.log('발급 토큰 : '+token);
+    console.log(response);
+    const { access_token } = response.data; // 발급된 토큰 저장
+    console.log('발급 토큰 : '+access_token);
 
-    const info = await axios.get("https://kapi.kakao.com/v2/user/me",{
+    const {data} = await axios.get("https://kapi.kakao.com/v2/user/me",{
       headers: {
-        'Authorization': `Bearer ${login_token}`
+        'Authorization': `Bearer ${access_token}`
       },
     });
-    console.log(info);
 
-    const token = await socialLogin({ response:info.data.response, provider}); // 로그인
+    const email = data.kakao_account.email;
+    const nickname = data.properties.nickname;
+
+    const token = await socialLogin({ email,nickname,provider}); // 로그인
     return res.status(200).send({result:true,token});
 
   }catch(err){
