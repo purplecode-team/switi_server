@@ -87,6 +87,18 @@ router.post('/compareCode',async(req,res)=>{
 
 })
 
+//메일 재전송
+router.post('/resendMail',async(req,res)=>{
+    const {email} = req.body;
+    try{
+        await mailUtil.sendEmail(email);
+        return res.status(400).send({result:false,email:email});
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
 router.post('/login',async(req,res,next)=>{
     const {email,password} = req.body;
 
