@@ -45,7 +45,7 @@ router.get('/myPage',isLoggedIn,async(req,res)=>{
     try{
 
         const myPage = await User.findOne({
-            attributes:['nickname','profilepath','sugar'],
+            attributes:['id','nickname','profilepath','sugar'],
             where:{id}
         });
 
@@ -71,7 +71,7 @@ router.get('/myProfile',isLoggedIn,async(req,res)=>{
     const id = req.decoded.id;
     try{
         const myProfile = await User.findOne({
-            attributes:['age','aboutme'],
+            attributes:['id','age','aboutme'],
             include:[{
                 model:Interest,
                 attributes:['category'],
@@ -107,7 +107,7 @@ router.get('/userProfile/:id',isLoggedIn,async(req,res)=>{
     const id = req.params.id;
     try{
         const userProfile = await User.findOne({
-            attributes:['age','aboutme','sugar','nickname','profilepath'],
+            attributes:['id','age','aboutme','sugar','nickname','profilepath'],
             include:[{
                 model:Interest,
                 attributes:['category'],
@@ -244,6 +244,23 @@ router.put('/updateUserinfo',isLoggedIn,upload.single('img'),async(req,res)=>{
 
         return res.status(200).send({result:true});
 
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
+// 회원 정보 page
+router.get('/myInfo',isLoggedIn,async(req,res)=>{
+    const id = req.decoded.id;
+    try{
+        const info = await User.findOne({
+            attributes:['id','nickname','profilepath'],
+            where:{id}
+        })
+
+        return res.status(200).send({result:true,info});
 
     }catch(err){
         console.error(err);
