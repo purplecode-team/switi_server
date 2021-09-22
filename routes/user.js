@@ -218,6 +218,53 @@ router.get('/scrapList', isLoggedIn,async(req,res)=>{
    }
 });
 
+//참여이력-스터디
+router.get('/studyHistory',isLoggedIn,async(req,res)=>{
+    const id = req.decoded.id;
+    try{
+        const studyList = await Study.findAll({
+            attributes: ['id','flag','end_flag','title','desc',
+                [
+                    sequelize.literal(`(
+                    SELECT COUNT(*)
+                    FROM likedList
+                    WHERE
+                    Study.id = likedList.StudyId
+                    )`),
+                    'scrapCount'
+                ]],
+            include:[{
+                model:User,
+                attributes:[],
+                as:'studyMembers',
+                where:{id},
+            },{
+                model:State,
+                attributes:['category']
+            },{
+                model:Interest,
+                attributes:['category']
+            }, {
+                model: Gu,
+                attributes: ['gu'],
+                include: [{
+                    model: Region,
+                    attributes: ['city']
+                }]
+            },{
+                model:Image,
+                attributes:['imgPath']
+            }],where:{end_flag:1}
+        });
+
+        return res.status(200).send({result:true,studyList});
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
 
 //회원정보 수정
 router.put('/updateUserinfo',isLoggedIn,upload.single('img'),async(req,res)=>{
