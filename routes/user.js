@@ -176,7 +176,7 @@ router.get('/scrapList', isLoggedIn,async(req,res)=>{
    const id = req.decoded.id;
    try{
        const scrapList = await Study.findAll({
-           attributes: ['id','flag','title','desc',
+           attributes: ['id','flag','end_flag','title','desc',
                    [
                        sequelize.literal(`(
                     SELECT COUNT(*)
@@ -193,14 +193,21 @@ router.get('/scrapList', isLoggedIn,async(req,res)=>{
                where:{id},
            },{
                model:State,
-               attributes:['category'],
-               through: {attributes: []}
+               attributes:['category']
            },{
                model:Interest,
-               attributes:['category'],
-               through: {attributes: []}
-           }
-           ]
+               attributes:['category']
+           }, {
+               model: Gu,
+               attributes: ['gu'],
+               include: [{
+                   model: Region,
+                   attributes: ['city']
+               }]
+           },{
+               model:Image,
+               attributes:['imgPath']
+           }]
        });
 
        return res.status(200).send({result:true,scrapList});
