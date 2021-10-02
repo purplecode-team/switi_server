@@ -6,8 +6,13 @@ const router = express.Router();
 router.get('/character',async(req,res)=>{
   try{
 
-      const character = await Character.findAll();
-      return res.status(200).send({result:true,character});
+      const category = await Character.findAll({
+        attributes:[
+          'id',['content','name'],['cate','category']
+        ]
+      });
+
+      return res.status(200).send({result:true,category});
 
   }catch(err){
     console.log(err);
@@ -18,8 +23,12 @@ router.get('/character',async(req,res)=>{
 // 관심분야
 router.get('/interest',async(req,res)=>{
   try{
-      const interest = await Interest.findAll();
-      return res.status(200).send({result:true,interest});
+      const category = await Interest.findAll({
+        attributes:[
+          'id',['category','name'],['cate','category']
+        ]
+      });
+      return res.status(200).send({result:true,category});
 
   }catch(err){
     console.log(err);
@@ -30,8 +39,12 @@ router.get('/interest',async(req,res)=>{
 // 나의 상황
 router.get('/state',async(req,res)=>{
   try{
-      const state = await State.findAll();
-      return res.status(200).send({result:true,state});
+      const category = await State.findAll({
+        attributes:[
+          'id',['category','name'],['cate','category']
+        ]
+      });
+      return res.status(200).send({result:true,category});
   }catch(err){
     console.log(err);
     return res.status(500).send({result:false});

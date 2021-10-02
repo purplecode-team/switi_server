@@ -7,6 +7,10 @@ module.exports = class State extends Sequelize.Model {
                 type: Sequelize.STRING(200),
                 allowNull: false,
             },
+            cate:{
+                type: Sequelize.STRING(200),
+                defaultValue:'state'
+            }
         }, {
             sequelize,
             timestamps:false,

@@ -18,8 +18,7 @@ module.exports = class User extends Sequelize.Model {
             },
             age:{
                 type:Sequelize.INTEGER,
-                allowNull:false,
-                defaultValue: '0',
+                allowNull:true
             },
             nickname:{
                 type:Sequelize.STRING,

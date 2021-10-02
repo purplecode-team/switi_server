@@ -7,6 +7,10 @@ module.exports = class Character extends Sequelize.Model {
                 type: Sequelize.STRING(200),
                 allowNull: false,
             },
+            cate:{
+                type: Sequelize.STRING(200),
+                defaultValue:'character'
+            }
         }, {
             sequelize,
             timestamps:false,
