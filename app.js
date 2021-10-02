@@ -13,11 +13,12 @@ const evaluateRouter = require('./routes/evaluate'); //상호평가 라우터
 const authRouter = require('./routes/auth');
 const socialLoginRouter = require('./routes/socialLogin');
 const cateRouter = require('./routes/category');
+const noticeRouter = require('./routes/notice');
 const { sequelize } = require('./models');
 
 const app = express();
 
-sequelize.sync({alter:true})
+sequelize.sync({force:false})
     .then(() => {
       console.log('데이터베이스 연결 성공');
     })
@@ -42,6 +43,7 @@ app.use('/evaluate',evaluateRouter);
 app.use('/auth',authRouter);
 app.use('/socialLogin',socialLoginRouter);
 app.use('/category',cateRouter);
+app.use('/notice',noticeRouter);
 app.use('/images',express.static(__dirname + '/images'));
 
 app.listen(4000, () => {
