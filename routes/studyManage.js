@@ -60,8 +60,8 @@ router.get('/studyMemList/:id',isLoggedIn,async(req,res)=>{
                 model:User,
                 attributes:['id','email','nickname','profilepath'],
                 as:'studyMembers',
-                through:{attributes:['contact']},
-            }],where:{id,idUser}
+                through:{attributes:['contact','leader']},
+            }],where:{id}
         })
 
         //수락 대기 인원
