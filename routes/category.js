@@ -54,8 +54,12 @@ router.get('/state',async(req,res)=>{
 // 지역
 router.get('/region',async(req,res)=>{
   try{
-      const region = await Region.findAll();
-      return res.status(200).send({result:true,region});
+      const category = await Region.findAll({
+        attributes:[
+          'id',['city','name'],['cate','category']
+        ]
+      });
+      return res.status(200).send({result:true,category});
   }catch(err){
     console.log(err);
     return res.status(500).send({result:false});
