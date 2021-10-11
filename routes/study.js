@@ -6,10 +6,8 @@ const { cancelSugar } = require("./sugarUtil");
 const router = express.Router();
 
 //스터디 작성
-router.post('/addStudy',isLoggedIn,upload.single('img'),async(req,res)=>{
+router.post('/addStudy',isLoggedIn,async(req,res)=>{
     const idUser = req.decoded.id;
-    console.log(req.file);
-    const imgPath = req.file.filename;
     //카테고리(3개 이하) , 지역(3개 이하), 모집대상 , 모집인원, 모임장소, 활동기간, 예정종료일, 문의연락처, 제목 ,내용 , 이미지사진
     const {online_flag, state ,category, address, recruit_num, detail_address, period, endDate, contact, title, desc } = req.body;
     const t = await sequelize.transaction(); // 트랜잭션 생성
@@ -25,14 +23,7 @@ router.post('/addStudy',isLoggedIn,upload.single('img'),async(req,res)=>{
             contact,
             title,
             desc,
-            recruit_num,
-            Images: [{
-                imgPath: "/images/" + imgPath ,
-            }]
-        }, {
-            include: [
-                Image
-            ], transaction:t
+            recruit_num
         });
 
         if(online_flag !== 'true'){ // 오프라인 스터디 일 경우
@@ -89,9 +80,6 @@ router.get('/studyDetail/:id',isLoggedIn,async(req,res)=>{
                     model:Region,
                     attributes:['city']
                 }]
-            },{
-                model:Image,
-                attributes:['imgPath']
             }],where:{id}
         });
 
@@ -161,9 +149,6 @@ router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
             model:User,
             attributes:['nickname'],
             }, {
-                model:Image,
-                attributes:['imgPath']
-            }, {
                 model:State,
                 attributes:['category'],
                 where:stateQuery,
@@ -204,10 +189,8 @@ router.delete('/deleteStudy/:id',isLoggedIn,async(req,res)=>{
 });
 
 //모집글 수정
-router.put('/updateStudy/:id',isLoggedIn,upload.single('img'),async(req,res)=>{
+router.put('/updateStudy/:id',isLoggedIn,async(req,res)=>{
     const id = req.params.id;
-    console.log(req.file);
-    const imgPath = req.file.filename;
     //카테고리(3개 이하) , 지역(3개 이하), 모집대상 , 모집인원, 모임장소, 활동기간, 예정종료일, 문의연락처, 제목 ,내용 , 이미지사진
     const {online_flag,state,category, address, recruit_num, detail_address, period, endDate, contact, title, desc } = req.body;
     const t = await sequelize.transaction(); // 트랜잭션 생성
@@ -231,9 +214,6 @@ router.put('/updateStudy/:id',isLoggedIn,upload.single('img'),async(req,res)=>{
             if (online_flag !== 'true') {
                 await study.setGus(address, {transaction: t}); // 오프라인일 경우 지역 수정
             }
-            await Image.update({
-                imgPath
-            },{where:{idStudy:id}},{transaction:t});
             await study.setInterests(category, {transaction: t});
             await study.setStates(state, {transaction: t});
             await t.commit();

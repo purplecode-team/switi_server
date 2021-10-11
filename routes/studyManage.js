@@ -9,11 +9,7 @@ router.get('/myStudyList',isLoggedIn,async(req,res)=>{
     try{
         const study = await Study.findAll({
             attributes:['id','title'],
-            include:[{
-                model:Image,
-                attributes:['imgPath']
-            }]
-            ,where:{idUser:id}
+            where:{idUser:id}
         })
         return res.status(200).send({result:true,study});
 
@@ -33,9 +29,6 @@ router.get('/myApplyList',isLoggedIn,async(req,res)=>{
                 model:Apply,
                 attributes:['id','apply_state'],
                 where:{idUser:id},
-            },{
-                model:Image,
-                attributes:['imgPath']
             }]
         });
 
