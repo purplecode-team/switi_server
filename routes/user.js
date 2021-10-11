@@ -204,9 +204,6 @@ router.get('/scrapList', isLoggedIn,async(req,res)=>{
                    model: Region,
                    attributes: ['city']
                }]
-           },{
-               model:Image,
-               attributes:['imgPath']
            }]
        });
 
@@ -251,9 +248,6 @@ router.get('/studyHistory',isLoggedIn,async(req,res)=>{
                     model: Region,
                     attributes: ['city']
                 }]
-            },{
-                model:Image,
-                attributes:['imgPath']
             }],where:{end_flag:1}
         });
 
@@ -267,11 +261,10 @@ router.get('/studyHistory',isLoggedIn,async(req,res)=>{
 
 
 //회원정보 수정
-router.put('/updateUserinfo',isLoggedIn,upload.single('img'),async(req,res)=>{
+router.put('/updateUserinfo',isLoggedIn,async(req,res)=>{
 
     const id = req.decoded.id; // 유저 id 값 가져오기
     const {nickname,email,newPassword} = req.body;
-    console.log(req.file);
     let {password} = req.body;
 
     try{
@@ -292,8 +285,7 @@ router.put('/updateUserinfo',isLoggedIn,upload.single('img'),async(req,res)=>{
         await user.update({
             email,
             nickname,
-            password,
-            profilepath:req.file.filename,
+            password
         })
 
         return res.status(200).send({result:true});
