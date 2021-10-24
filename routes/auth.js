@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const image = require('../models/image');
 const jwt = require('jsonwebtoken');
 const { isLoggedIn } = require('./middlewares');
 const mailUtil = require('./mailUtil');
@@ -35,12 +36,20 @@ router.post('/signup', async (req,res,next) => {
            return res.status(400).send({result:false,message:"이미 가입된 이메일입니다."}); //false 추가해주기
         }
 
+        const num = Math.floor(Math.random()*4)+1;
+        // 프로필 이미지 랜덤으로 가져오기
+        const path = await image.findOne({
+            where:{id:num},
+            attributes:['imgPath']
+        });
+
         const hash = await bcrypt.hash(password, 12) // 패스워드 암호화
         await User.create({ // 인증메일 전송 ( 회원가입때 할지 로그인할때 할지 ? )
             nickname,
             email,
             password:hash,
             gender,
+            profilepath:path.imgPath
         });
 
         return res.status(200).send({result:true,message:"가입완료"}); // true 모든 api 수정하기
@@ -50,11 +59,6 @@ router.post('/signup', async (req,res,next) => {
         return res.status(500).send('error');
     }
 });
-
-// 로그인 테스트 라우터
-router.get('/test',isLoggedIn, (req,res)=>{
-    res.send('로그인확인@');
-})
 
 //메일 인증
 router.post('/compareCode',async(req,res)=>{
