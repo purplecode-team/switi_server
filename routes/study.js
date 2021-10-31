@@ -337,4 +337,29 @@ router.delete('/deleteApply/:id',isLoggedIn,async(req,res)=>{
     }
 })
 
+// 현재 참여 중인 스터디 탈퇴
+router.delete('/quitStudy/:id',isLoggedIn,async(req,res)=>{
+
+    const idStudy = req.params.id;
+    const idUser = req.decoded.id;
+
+    try{
+
+        // 스터디 멤버 & 스터디 신청내역에서 삭제
+        await studyMember.destroy({
+            where:{UserId:idUser,StudyId:idStudy}
+        })
+
+        await Apply.destroy({
+            where:{idUser,idStudy}
+        })
+
+        return res.status(200).send({result:true});
+
+    }catch(err){
+        console.log(err);
+        return res.status(500).send({result:false});
+    }
+})
+
 module.exports = router;
