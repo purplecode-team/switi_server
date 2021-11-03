@@ -71,18 +71,22 @@ router.get('/getSearch',isLoggedIn,async(req,res)=>{
             order:[["id","DESC"]]
         })
 
-        const idx = search[9]?.id;
+        if(search.length>=10){
+            
+            const idx = search[9].id;
 
-        // 검색어 10개를 제외한 나머지는 모두 삭제
-        await Search.destroy({
-            where:
-            {
-                id:{
-                    [Op.lt]:idx
-                },
-                idUser:idUser
-            }
-        });
+            // 검색어 10개를 제외한 나머지는 모두 삭제
+            await Search.destroy({
+                where:
+                  {
+                      id:{
+                          [Op.lt]:idx
+                      },
+                      idUser:idUser
+                  }
+            });
+
+        }
 
         return res.status(200).send({search,result:true});
 
