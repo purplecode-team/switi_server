@@ -48,7 +48,7 @@ router.post('/searchStudy',isLoggedIn,async(req,res)=>{
             }],where:{
                 [Op.or]: [{title:{
                     [Op.like]:`%${keyword}%` //유사검색
-                }},{desc: {[Op.like]:`%${keyword}%`}}]
+                }},{desc: {[Op.like]:`%${keyword}%`}},{detail_address: {[Op.like]:`%${keyword}%`}}]
             }
         });
 
@@ -72,7 +72,7 @@ router.get('/getSearch',isLoggedIn,async(req,res)=>{
         })
 
         if(search.length>=10){
-            
+
             const idx = search[9].id;
 
             // 검색어 10개를 제외한 나머지는 모두 삭제
