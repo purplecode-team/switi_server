@@ -8,7 +8,7 @@ router.get('/myStudyList',isLoggedIn,async(req,res)=>{
     const id = req.decoded.id;
     try{
         const study = await Study.findAll({
-            attributes:['id','title'],
+            attributes:['id','title','end_flag'],
             where:{idUser:id}
         })
         return res.status(200).send({result:true,study});
@@ -24,7 +24,7 @@ router.get('/myApplyList',isLoggedIn,async(req,res)=>{
     const id = req.decoded.id;
     try{
         const study = await Study.findAll({
-            attributes:['id','title','flag'],
+            attributes:['id','title','flag','end_flag'],
             include:[{
                 model:Apply,
                 attributes:['id','apply_state'],
