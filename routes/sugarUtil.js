@@ -29,7 +29,7 @@ const updateSugar = async (req) => {
 
 }
 
-//신고 당했을 경우 -10
+//신고 당했을 경우 -2
 const reportedSugar = async (req) => {
 
   const id = req.idUser; // 신고 당한 유저 id
@@ -41,7 +41,7 @@ const reportedSugar = async (req) => {
       where: {id : id}
     })
 
-    const newScore = parseInt(user.sugar) - 10;
+    const newScore = parseInt(user.sugar) - 2;
 
     // 수정
     await User.update({
