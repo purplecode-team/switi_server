@@ -242,6 +242,14 @@ router.put('/updateFlag/:id',isLoggedIn,async(req,res)=>{
            {where:{id}}
        )
 
+       // 해당 스터디의 apply list 중 승인되지 않은 신청 목록들 모두 삭제
+       await Apply.destroy({
+            where:{
+                idStudy : id,
+                apply_state : 0
+            }
+       })
+
         return res.status(200).send({result:true});
 
    } catch(err){
