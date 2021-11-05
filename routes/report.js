@@ -2,6 +2,7 @@ const express = require('express');
 const { reportedSugar } = require("./sugarUtil");
 const { Study,Image,studyMember,User,sequelize,Report } = require('../models');
 const { isLoggedIn } = require('./middlewares');
+const {Op} = require('sequelize');
 const router = express.Router();
 
 //신고하기 클릭 -> 현재 참여중인 스터디만 조회
@@ -34,6 +35,7 @@ router.get('/getReportList',isLoggedIn,async(req,res)=>{
 //스터디원 목록 출력
 router.get('/getReportInfo/:studyId',isLoggedIn,async(req,res)=>{
     const studyId = req.params.studyId;
+    const userId = req.decoded.id; // 현재 로그인된 유저 id 값
 
     try{
 
@@ -42,11 +44,16 @@ router.get('/getReportInfo/:studyId',isLoggedIn,async(req,res)=>{
             include:[{
                 attributes:['id','nickname'],
                 model:User,
-                as:'studyMembers'
+                as:'studyMembers',
+                where:{
+                    id : {
+                        [Op.ne]: userId
+                    }
+                }
             }],
             where:{id:studyId}
         })
-
+        console.log(member);
         return res.status(200).send({result:true,member});
 
     }catch(err){
