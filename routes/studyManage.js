@@ -8,7 +8,7 @@ router.get('/myStudyList',isLoggedIn,async(req,res)=>{
     const id = req.decoded.id;
     try{
         const study = await Study.findAll({
-            attributes:['id','title','end_flag'],
+            attributes:['id','title','end_flag','endDate'],
             where:{idUser:id}
         })
         return res.status(200).send({result:true,study});
