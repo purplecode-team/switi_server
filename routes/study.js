@@ -27,7 +27,7 @@ router.post('/addStudy',isLoggedIn,async(req,res)=>{
         });
 
         if(online_flag !== 'true'){ // 오프라인 스터디 일 경우
-            await study.addGu(address,{transaction:t}); // 지역 추가
+            await study.addRegion(address,{transaction:t}); // 지역 추가
         }
         await study.addInterest(category,{transaction:t}); // 카테고리 추가
         await study.addState(state,{transaction:t});
@@ -74,12 +74,8 @@ router.get('/studyDetail/:id',isLoggedIn,async(req,res)=>{
                 model:State,
                 attributes:['category']
             },{
-                model:Gu,
-                attributes:['gu'],
-                include:[{
-                    model:Region,
-                    attributes:['city']
-                }]
+                model:Region,
+                attributes:['city']
             }],where:{id}
         });
 
@@ -153,13 +149,9 @@ router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
                 attributes:['category'],
                 where:stateQuery,
             },{
-                model:Gu,
-                attributes:['gu'],
+                model:Region,
+                attributes:['city'],
                 where:regionQuery,
-                include:[{
-                    model:Region,
-                    attributes:['city']
-                }]
             }], where: {online_flag: flag} , order : orderQuery
     });
         return res.status(200).send({result:true,study});
@@ -212,7 +204,7 @@ router.put('/updateStudy/:id',isLoggedIn,async(req,res)=>{
             },{transaction: t});
 
             if (online_flag !== 'true') {
-                await study.setGus(address, {transaction: t}); // 오프라인일 경우 지역 수정
+                await study.setRegions(address, {transaction: t}); // 오프라인일 경우 지역 수정
             }
             await study.setInterests(category, {transaction: t});
             await study.setStates(state, {transaction: t});

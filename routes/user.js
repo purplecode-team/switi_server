@@ -26,7 +26,7 @@ router.put('/setProfile',isLoggedIn,async(req,res)=>{
             await user.addState(myState,{transaction:t});
             await user.addCharacter(myCharacter,{transaction:t});
             await user.addInterest(myInterest,{transaction:t});
-            await user.addGu(myRegion,{transaction:t});
+            await user.addRegion(myRegion,{transaction:t});
             t.commit();
             return res.status(200).send({result:true});
         }
@@ -81,12 +81,9 @@ router.get('/myProfile',isLoggedIn,async(req,res)=>{
                 attributes:['category'],
                 through:{attributes:['StateId']}
             },{
-                model:Gu,
-                attributes:['gu'],
-                include:[{
-                    model:Region,
-                    attributes:['city']
-                }]
+                model:Region,
+                attributes:['city'],
+                through:{attributes:['RegionId']}
             },{
                 model:Character,
                 attributes:['content'],
@@ -117,12 +114,9 @@ router.get('/userProfile/:id',isLoggedIn,async(req,res)=>{
                 attributes:['category'],
                 through:{attributes:['StateId']}
             },{
-                model:Gu,
-                attributes:['gu'],
-                include:[{
-                    model:Region,
-                    attributes:['city']
-                }]
+                model:Region,
+                attributes:['city'],
+                through:{attributes:['RegionId']}
             },{
                 model:Character,
                 attributes:['content'],
@@ -155,7 +149,7 @@ router.put('/updateProfile',isLoggedIn,async(req,res)=>{
             await user.setStates(myState,{transaction:t});
             await user.setCharacters(myCharacter,{transaction:t});
             await user.setInterests(myInterest,{transaction:t});
-            await user.setGus(myRegion,{transaction:t});
+            await user.setRegions(myRegion,{transaction:t});
             await t.commit();
 
             return res.status(200).send({result:true});
@@ -198,12 +192,8 @@ router.get('/scrapList', isLoggedIn,async(req,res)=>{
                model:Interest,
                attributes:['category']
            }, {
-               model: Gu,
-               attributes: ['gu'],
-               include: [{
-                   model: Region,
-                   attributes: ['city']
-               }]
+               model: Region,
+               attributes: ['city']
            }]
        });
 
@@ -242,12 +232,8 @@ router.get('/studyHistory',isLoggedIn,async(req,res)=>{
                 model:Interest,
                 attributes:['category']
             }, {
-                model: Gu,
-                attributes: ['gu'],
-                include: [{
-                    model: Region,
-                    attributes: ['city']
-                }]
+                model: Region,
+                attributes: ['city']
             }],where:{end_flag:1}
         });
 

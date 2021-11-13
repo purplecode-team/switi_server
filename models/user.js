@@ -78,7 +78,7 @@ module.exports = class User extends Sequelize.Model {
         db.User.belongsToMany(db.Study,{through:'studyMember'});
         db.User.belongsToMany(db.Interest,{through:'myInterest'});
         db.User.belongsToMany(db.Character,{through:'myCharacter'});
-        db.User.belongsToMany(db.Gu,{through:'myRegion'});
+        db.User.belongsToMany(db.Region,{through:'myRegion'});
         db.User.belongsToMany(db.State,{through:'myState'});
         db.User.belongsToMany(db.Study, {through:'likedList',as:'likedStudy'}); //스크랩 스터디 목록
 

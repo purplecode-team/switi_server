@@ -23,6 +23,9 @@ module.exports = class Region extends Sequelize.Model {
     }
 
     static associate(db) {
-        db.Region.hasMany(db.Gu,{ foreignKey: 'regionId', sourceKey: 'id'});
+        //db.Region.hasMany(db.Gu,{ foreignKey: 'regionId', sourceKey: 'id'});
+        //db.Gu.belongsTo(db.Region,{foreignKey:'regionId', targetKey:'id'});
+        db.Region.belongsToMany(db.Study, {through:'studyRegion'}); // 스터디 지역
+        db.Region.belongsToMany(db.User, {through:'myRegion'});
     };
 }
