@@ -39,12 +39,8 @@ router.post('/searchStudy',isLoggedIn,async(req,res)=>{
                 model:State,
                 attributes:['category']
             },{
-                model:Gu,
-                attributes:['gu'],
-                include:[{
-                    model:Region,
-                    attributes:['city']
-                }]
+                model:Region,
+                attributes:['city']
             }],where:{
                 [Op.or]: [{title:{
                     [Op.like]:`%${keyword}%` //유사검색
@@ -90,12 +86,8 @@ router.post('/searchKeyword',isLoggedIn,async(req,res)=>{
                 model:State,
                 attributes:['category']
             },{
-                model:Gu,
-                attributes:['gu'],
-                include:[{
-                    model:Region,
-                    attributes:['city']
-                }]
+                model:Region,
+                attributes:['city']
             }],where:{
                 [Op.or]: [{title:{
                         [Op.like]:`%${keyword}%` //유사검색
