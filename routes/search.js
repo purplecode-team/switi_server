@@ -60,6 +60,57 @@ router.post('/searchStudy',isLoggedIn,async(req,res)=>{
     }
 })
 
+//검색하기 - 검색어 기록 X
+router.post('/searchKeyword',isLoggedIn,async(req,res)=>{
+
+    const {keyword} = req.body; // 검색어
+
+    try{
+
+        //검색 -> 해당 키워드에 맞는 스터디 리스트 출력
+        const study = await Study.findAll({
+            attributes:{include: [
+                    [
+                        sequelize.literal(`(
+                    SELECT COUNT(*)
+                    FROM likedList
+                    WHERE
+                    Study.id = likedList.StudyId
+                    )`),
+                        'scrapCount'
+                    ]
+                ]},
+            include:[{
+                model:Interest,
+                attributes:['category']
+            }, {
+                model:Image,
+                attributes:['imgPath']
+            }, {
+                model:State,
+                attributes:['category']
+            },{
+                model:Gu,
+                attributes:['gu'],
+                include:[{
+                    model:Region,
+                    attributes:['city']
+                }]
+            }],where:{
+                [Op.or]: [{title:{
+                        [Op.like]:`%${keyword}%` //유사검색
+                    }},{desc: {[Op.like]:`%${keyword}%`}},{detail_address: {[Op.like]:`%${keyword}%`}}]
+            }
+        });
+
+        return res.status(200).send({result:true,study});
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({result:false});
+    }
+})
+
 //검색 기록 출력
 router.get('/getSearch',isLoggedIn,async(req,res)=>{
     const idUser = req.decoded.id;
