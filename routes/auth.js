@@ -133,7 +133,7 @@ router.post('/login',async(req,res,next)=>{
             }, process.env.JWT_SECRET);
 
             console.log(token);
-            return res.status(200).send({result:true,token});
+            return res.status(200).send({result:true,token,email:user.email});
         }
 
         return res.status(404).send({result:false});
