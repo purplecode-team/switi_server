@@ -207,6 +207,9 @@ router.post('/setNewPwd',async(req,res)=>{
             {password: hash},
             {where: {email: email}
         });
+
+        return res.status(200).send({return:true});
+
     }catch(err){
         console.error(err);
         return res.status(500).send({return:false});
