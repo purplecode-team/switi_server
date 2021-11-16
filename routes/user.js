@@ -300,4 +300,23 @@ router.get('/myInfo',isLoggedIn,async(req,res)=>{
     }
 })
 
+// 유저 프로필 이미지 추가
+router.post('/uploadImage',upload.single('img'),async(req,res)=>{
+
+    const imgPath = req.file.filename;
+    console.log(imgPath);
+
+    try{
+
+        const result = await Image.create({
+            imgPath: "/images/" + imgPath
+        })
+
+        return res.status(200).send({result:true});
+
+    }catch(err){
+        return res.status(500).send({result:false});
+    }
+})
+
 module.exports = router;
