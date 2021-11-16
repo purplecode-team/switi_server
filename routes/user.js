@@ -12,12 +12,12 @@ const router = express.Router();
 // 프로필 설정
 router.put('/setProfile',async(req,res)=>{
    // 나이, 관심지역, 관심분야, 성격, 현재 상황, 자기소개
-    const {userId} = req.body;
+    const {nickname} = req.body;
     const { age, myRegion, myInterest, myCharacter, myState ,aboutme } = req.body;
     const t = await sequelize.transaction(); // 트랜잭션 생성
 
     try{
-        const user = await User.findOne({where:{id:userId}});
+        const user = await User.findOne({where:{nickname:nickname}});
         const result = await user.update({
             age:age,
             aboutme:aboutme,
