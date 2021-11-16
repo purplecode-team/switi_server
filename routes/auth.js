@@ -169,7 +169,7 @@ router.delete('/deleteUser',isLoggedIn,async(req,res)=>{
 router.post('/findPwd', async(req,res)=>{
     const email = req.body.email;
     try{
-        const user = User.findOne({where:email});
+        const user = User.findOne({where:{email:email}});
         if(!user){
             // 존재하지 않는 이메일인 경우
             return res.status(404).send({result:false});
