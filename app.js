@@ -14,6 +14,7 @@ const authRouter = require('./routes/auth');
 const socialLoginRouter = require('./routes/socialLogin');
 const cateRouter = require('./routes/category');
 const noticeRouter = require('./routes/notice');
+const questionRouter = require('./routes/question');
 const { sequelize } = require('./models');
 
 const app = express();
@@ -44,6 +45,7 @@ app.use('/auth',authRouter);
 app.use('/socialLogin',socialLoginRouter);
 app.use('/category',cateRouter);
 app.use('/notice',noticeRouter);
+app.use('/question',questionRouter);
 app.use('/images',express.static(__dirname + '/images'));
 
 app.listen(4000, () => {

@@ -42,6 +42,27 @@ module.exports = {
 
     },
 
+    // 문의 메일
+    sendQuestion: async(title,contents,email,res) => {
+
+        const mailOptions = {
+            from:process.env.SWITI_EMAIL,
+            to:'tpgml122@gmail.com',
+            subject: "[문의]: "+ email +" 님의 문의 메일입니다.",
+            html: "<p> 제목 : "+ title + "</p>" + "<p> 문의 내용 : "+ contents +"</p>"
+        }
+
+        try{
+            // 문의 메일 전송
+            await smtpTransport.sendMail(mailOptions);
+
+        }catch(err){
+            console.error(err);
+            return res.status(500).send({result:false});
+        }
+
+    },
+
     //인증번호 비교
     compareCode: async (email,inputCode,res) => {
         try{
