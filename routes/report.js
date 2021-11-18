@@ -82,6 +82,10 @@ router.post('/reportUser/:studyId/:memberId',isLoggedIn,async(req,res)=>{
 
         // 신고 시 당도 감소 
         await reportedSugar({idUser:memberId});
+        await User.update(
+            {event:false},
+            {where:{id:memberId}}
+        )
 
         return res.status(200).send({result:true});
 

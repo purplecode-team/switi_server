@@ -118,6 +118,11 @@ router.post('/login',async(req,res,next)=>{
 
         // 패스워드 일치 시
         if(result){
+
+            if(!user.event){
+                return res.status(403).send({result:false,message:'신고당한 회원입니다.'});
+            }
+
             if(!user.certification){
                 // 최초 로그인일 경우 인증메일 전송하기
                 console.log('메일 전송');
