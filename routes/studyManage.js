@@ -157,6 +157,12 @@ router.delete('/deleteMember/:StudyId/:UserId',isLoggedIn,async(req,res)=>{
         await studyMember.destroy({
             where:{StudyId,UserId}
         })
+
+        // apply 도 삭제 시키기
+        await Apply.destroy({
+            where:{idStudy:StudyId, idUser:UserId,apply_state:1}
+        })
+
         return res.status(200).send({result:true});
 
     }catch(err){
