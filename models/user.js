@@ -68,14 +68,14 @@ module.exports = class User extends Sequelize.Model {
         });
     }
     static associate(db) {
-        db.User.hasMany(db.Study,{foreignKey:'idUser',sourceKey:'id'});
+        db.User.hasMany(db.Study,{foreignKey:'idUser',sourceKey:'id',onDelete:'cascade'});
         db.User.hasMany(db.Evaluation, {foreignKey:'idUser',sourceKey:'id'});
         db.User.hasMany(db.Report,{foreignKey:'idUser',sourceKey:'id'});
         db.User.hasMany(db.Report,{foreignKey:'idMember',sourceKey:'id'});
-        db.User.hasMany(db.Apply,{foreignKey:'idUser',sourceKey:'id'});
+        db.User.hasMany(db.Apply,{foreignKey:'idUser',sourceKey:'id',onDelete:'cascade'});
         db.User.hasMany(db.Search, {foreignKey:'idUser', sourceKey:'id'});
         db.User.hasOne(db.Alarm,{foreignKey:'idUser',sourceKey:'id'});
-        db.User.belongsToMany(db.Study,{through:'studyMember'});
+        db.User.belongsToMany(db.Study,{through:'studyMember',onDelete:'cascade'});
         db.User.belongsToMany(db.Interest,{through:'myInterest'});
         db.User.belongsToMany(db.Character,{through:'myCharacter'});
         db.User.belongsToMany(db.Region,{through:'myRegion'});

@@ -66,11 +66,11 @@ module.exports = class Study extends Sequelize.Model {
         db.Study.belongsTo(db.User,{foreignKey:'idUser',targetKey:'id'}); // 스터디 작성자
         db.Study.hasMany(db.Evaluation,{foreignKey:'idStudy',sourceKey:'id'});
         db.Study.hasMany(db.Image,{foreignKey:'idStudy',sourceKey:'id',onDelete:'cascade'});
-        db.Study.belongsToMany(db.User,{through:'studyMember',as:'studyMembers'});
+        db.Study.belongsToMany(db.User,{through:'studyMember',as:'studyMembers',onDelete:'cascade'});
         db.Study.belongsToMany(db.Interest, {through:'studyCategory'}); // 카테고리 n:m
         db.Study.belongsToMany(db.State, {through:'studyTarget'}); // 스터디 대상
         db.Study.belongsToMany(db.Region, {through:'studyRegion'}); // 스터디 지역
-        db.Study.belongsToMany(db.User, {through:'likedList',as:'likedUser'}); // 스크랩 스터디 목록
+        db.Study.belongsToMany(db.User, {through:'likedList',as:'likedUser',onDelete:'cascade'}); // 스크랩 스터디 목록
     }
 
 
