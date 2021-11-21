@@ -113,15 +113,15 @@ router.get('/studyList/:onlineFlag',isLoggedIn,async(req,res)=>{
     if(region && region !== 'undefined' && region !== '0'){
         // 지역
         const regionArr = region.split(':');
-        regionQuery = {regionId:regionArr};
+        regionQuery = {id:regionArr};
     }
 
     //정렬
     let orderQuery;
     if(order === 'update'){ // 최신순
-        orderQuery = [['createdAt','DESC']];
+        orderQuery = [['flag','DESC'],['createdAt','DESC']];
     }else if(order === 'count'){ // 인기순
-        orderQuery = [[sequelize.col('scrapCount'),'DESC']];
+        orderQuery = [['flag','DESC'],[sequelize.col('scrapCount'),'DESC']];
     }
 
     try{

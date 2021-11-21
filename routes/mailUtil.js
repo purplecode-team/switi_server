@@ -47,7 +47,7 @@ module.exports = {
 
         const mailOptions = {
             from:process.env.SWITI_EMAIL,
-            to:'tpgml122@gmail.com',
+            to:'switiswitihoney@gmail.com',
             subject: "[문의]: "+ email +" 님의 문의 메일입니다.",
             html: "<p> 제목 : "+ title + "</p>" + "<p> 문의 내용 : "+ contents +"</p>"
         }
