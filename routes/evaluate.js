@@ -12,6 +12,7 @@ router.get('/evaluatePage',isLoggedIn,isEvaluated,async(req,res)=>{
     const idStudy = req.query.idStudy; // 스터디 id
 
     try{
+
         const user = await User.findOne({
             attributes: ['nickname','profilePath'],
             where: {id : idMember}
@@ -27,7 +28,7 @@ router.get('/evaluatePage',isLoggedIn,isEvaluated,async(req,res)=>{
 
 
 //상호평가
-router.post('/peerEvaluate',isLoggedIn,async(req,res)=>{
+router.post('/peerEvaluate',isLoggedIn,isEvaluated,async(req,res)=>{
 
     const idUser = req.decoded.id; // 평가 한 유저 id
     const idMember = req.query.idMember; // 평가 받은 유저 id
