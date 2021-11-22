@@ -1,4 +1,4 @@
-const { Evaluation } = require('../models');
+const { Evaluation,User } = require('../models');
 const jwt = require('jsonwebtoken');
 
 // 로그인 jwt 토큰 검사
@@ -27,14 +27,14 @@ exports.isEvaluated = async(req,res,next) => {
      })
 
     if(e){
-      return res.status(403).send({result:false, message:'이미 평가한 스터디원 입니다.'});
+      return res.status(403).send({result:false,error:403,message:'이미 평가한 스터디원 입니다.'});
     }else{
       next();
     }
 
   }catch(err){
     console.log(err);
-    return res.status(403).send({result:false})
+    return res.status(500).send({result:false})
   }
 };
 

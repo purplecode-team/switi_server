@@ -6,7 +6,7 @@ const { isLoggedIn } = require('./middlewares');
 const router = express.Router();
 
 //상호평가 페이지 -> 상대 닉네임 & 프로필 출력
-router.get('/evaluatePage',isLoggedIn,async(req,res)=>{
+router.get('/evaluatePage',isLoggedIn,isEvaluated,async(req,res)=>{
 
     const idMember = req.query.idMember; // 상대 스터디원 id
     const idStudy = req.query.idStudy; // 스터디 id
@@ -27,7 +27,7 @@ router.get('/evaluatePage',isLoggedIn,async(req,res)=>{
 
 
 //상호평가
-router.post('/peerEvaluate',isLoggedIn,isEvaluated,async(req,res)=>{
+router.post('/peerEvaluate',isLoggedIn,async(req,res)=>{
 
     const idUser = req.decoded.id; // 평가 한 유저 id
     const idMember = req.query.idMember; // 평가 받은 유저 id
