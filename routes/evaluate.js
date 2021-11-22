@@ -6,12 +6,21 @@ const { isLoggedIn } = require('./middlewares');
 const router = express.Router();
 
 //상호평가 페이지 -> 상대 닉네임 & 프로필 출력
-router.get('/evaluatePage',isLoggedIn,isEvaluated,async(req,res)=>{
+router.get('/evaluatePage',isLoggedIn,async(req,res)=>{
 
     const idMember = req.query.idMember; // 상대 스터디원 id
     const idStudy = req.query.idStudy; // 스터디 id
+    const idUser = req.decoded.id;
 
     try{
+
+        const e = await Evaluation.findOne({
+            where:{idUser:idUser, idMember:idMember, idStudy:idStudy}
+        })
+
+        if(e){
+            return res.status(403).send({result:false,error:403,message:'이미 평가한 스터디원 입니다.'});
+        }
 
         const user = await User.findOne({
             attributes: ['nickname','profilePath'],
@@ -28,7 +37,7 @@ router.get('/evaluatePage',isLoggedIn,isEvaluated,async(req,res)=>{
 
 
 //상호평가
-router.post('/peerEvaluate',isLoggedIn,isEvaluated,async(req,res)=>{
+router.post('/peerEvaluate',isLoggedIn,async(req,res)=>{
 
     const idUser = req.decoded.id; // 평가 한 유저 id
     const idMember = req.query.idMember; // 평가 받은 유저 id
@@ -39,6 +48,14 @@ router.post('/peerEvaluate',isLoggedIn,isEvaluated,async(req,res)=>{
     //console.log("score11:"+score);
 
     try{
+
+        const e = await Evaluation.findOne({
+            where:{idUser:idUser, idMember:idMember, idStudy:idStudy}
+        })
+
+        if(e){
+            return res.status(403).send({result:false,error:403,message:'이미 평가한 스터디원 입니다.'});
+        }
 
         await Evaluation.create({
             score:score,
