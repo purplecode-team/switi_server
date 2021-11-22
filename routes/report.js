@@ -1,7 +1,7 @@
 const express = require('express');
 const { reportedSugar } = require("./sugarUtil");
 const { Study,Image,studyMember,User,sequelize,Report } = require('../models');
-const { isLoggedIn } = require('./middlewares');
+const { isLoggedIn, isReported } = require('./middlewares');
 const {Op} = require('sequelize');
 const router = express.Router();
 
@@ -63,7 +63,7 @@ router.get('/getReportInfo/:studyId',isLoggedIn,async(req,res)=>{
 })
 
 //신고하기
-router.post('/reportUser/:studyId/:memberId',isLoggedIn,async(req,res)=>{
+router.post('/reportUser/:studyId/:memberId',isLoggedIn,isReported,async(req,res)=>{
 
     const userId = req.decoded.id;
     const studyId = req.params.studyId;
@@ -82,10 +82,6 @@ router.post('/reportUser/:studyId/:memberId',isLoggedIn,async(req,res)=>{
 
         // 신고 시 당도 감소 
         await reportedSugar({idUser:memberId});
-        await User.update(
-            {event:false},
-            {where:{id:memberId}}
-        )
 
         return res.status(200).send({result:true});
 
