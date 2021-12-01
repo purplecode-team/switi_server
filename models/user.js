@@ -14,7 +14,7 @@ module.exports = class User extends Sequelize.Model {
             },
             gender:{
                 type:Sequelize.INTEGER,
-                allowNull:false,
+                allowNull:true,
             },
             age:{
                 type:Sequelize.INTEGER,
@@ -55,6 +55,16 @@ module.exports = class User extends Sequelize.Model {
                 type:Sequelize.INTEGER,
                 allowNull:true,
             },
+            age_flag:{ // age 공개 여부
+                type:Sequelize.BOOLEAN,
+                allowNull:false,
+                defaultValue: false,
+            },
+            gender_flag:{ // gender 공개 여부
+                type:Sequelize.BOOLEAN,
+                allowNull:false,
+                defaultValue:false,
+            }
 
         }, {
             sequelize,

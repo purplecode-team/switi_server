@@ -27,7 +27,7 @@ router.post('/checkNickname', async(req,res,next)=>{
 
 //회원가입
 router.post('/signup', async (req,res,next) => {
-    const { nickname, email, password, gender } = req.body; // 이메일, 패스워드, 닉네임, 성별     
+    const { nickname, email, password, gender, gender_flag } = req.body; // 이메일, 패스워드, 닉네임, 성별, 성별 공개 여부
     try{
         const isEmail = await User.findOne({
             where:{email}
@@ -49,6 +49,7 @@ router.post('/signup', async (req,res,next) => {
             email,
             password:hash,
             gender,
+            gender_flag:gender_flag,
             profilepath:path.imgPath
         });
 

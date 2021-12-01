@@ -13,7 +13,7 @@ const router = express.Router();
 router.put('/setProfile',async(req,res)=>{
    // 나이, 관심지역, 관심분야, 성격, 현재 상황, 자기소개
     const {nickname} = req.body;
-    const { age, myRegion, myInterest, myCharacter, myState ,aboutme } = req.body;
+    const { age, myRegion, myInterest, myCharacter, myState ,aboutme, age_flag } = req.body;
     const t = await sequelize.transaction(); // 트랜잭션 생성
 
     try{
@@ -21,6 +21,7 @@ router.put('/setProfile',async(req,res)=>{
         const result = await user.update({
             age:age,
             aboutme:aboutme,
+            age_flag:age_flag,
         },{transaction:t});
         if(result){
             await user.addState(myState,{transaction:t});
@@ -71,7 +72,7 @@ router.get('/myProfile',isLoggedIn,async(req,res)=>{
     const id = req.decoded.id;
     try{
         const myProfile = await User.findOne({
-            attributes:['id','age','aboutme','email'],
+            attributes:['id','age','aboutme','email','age_flag','gender_flag'],
             include:[{
                 model:Interest,
                 attributes:['category'],
@@ -104,7 +105,7 @@ router.get('/userProfile/:id',isLoggedIn,async(req,res)=>{
     const id = req.params.id;
     try{
         const userProfile = await User.findOne({
-            attributes:['id','age','aboutme','sugar','nickname','profilepath','email'],
+            attributes:['id','age','aboutme','sugar','nickname','profilepath','email','age_flag','gender_flag'],
             include:[{
                 model:Interest,
                 attributes:['category'],
