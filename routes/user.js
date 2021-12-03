@@ -72,7 +72,7 @@ router.get('/myProfile',isLoggedIn,async(req,res)=>{
     const id = req.decoded.id;
     try{
         const myProfile = await User.findOne({
-            attributes:['id','age','aboutme','email','age_flag','gender_flag'],
+            attributes:['id','age','aboutme','email','age_flag'],
             include:[{
                 model:Interest,
                 attributes:['category'],
@@ -105,7 +105,7 @@ router.get('/userProfile/:id',isLoggedIn,async(req,res)=>{
     const id = req.params.id;
     try{
         const userProfile = await User.findOne({
-            attributes:['id','age','aboutme','sugar','nickname','profilepath','email','age_flag','gender_flag'],
+            attributes:['id','age','aboutme','sugar','nickname','profilepath','email','age_flag'],
             include:[{
                 model:Interest,
                 attributes:['category'],

@@ -59,11 +59,6 @@ module.exports = class User extends Sequelize.Model {
                 type:Sequelize.BOOLEAN,
                 allowNull:false,
                 defaultValue: false,
-            },
-            gender_flag:{ // gender 공개 여부
-                type:Sequelize.BOOLEAN,
-                allowNull:false,
-                defaultValue:false,
             }
 
         }, {
